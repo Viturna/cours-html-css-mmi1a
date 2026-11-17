@@ -1,0 +1,3708 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML / CSS — Le squelette et la peau · MMI 1A</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Doto:ROND,wght@0..100,100..900&family=Inter:wght@400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --white: #fff;
+      --g1: #f5f5f6;
+      --g2: #e3e4e6;
+      --g3: #d6d7d9;
+      --g4: #62656b;
+      --g5: #55585e;
+      --dg1: #3d3e43;
+      --dg2: #2b2c30;
+      --black: #1a1b1d;
+      --foil: linear-gradient(110deg, #4a4c52, #8a8d93 45%, #5a5d63 70%, #7a7d83);
+      --foil-d: linear-gradient(110deg, #ffffff, #8d9096 45%, #e9eaec 70%, #7d8086);
+      --m: 56px;
+      --ease: cubic-bezier(.16, 1, .3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--white);
+      overflow: hidden;
+      transition: background-color .3s steps(5)
+    }
+
+    body.is-dark {
+      background: var(--black)
+    }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      font-weight: 500;
+      letter-spacing: -.03em;
+      color: var(--black);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility
+    }
+
+    ::selection {
+      background: var(--black);
+      color: var(--white)
+    }
+
+    #stage {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1600px;
+      height: 900px;
+      transform-origin: center center;
+      background: var(--white);
+      transition: background-color .3s steps(5), color .3s steps(5)
+    }
+
+    #stage.is-dark {
+      background: var(--black);
+      color: var(--white)
+    }
+
+    /* ---------- utilitaires typo ---------- */
+    .mono {
+      font-family: "Space Mono", ui-monospace, monospace;
+      font-weight: 400;
+      font-size: 15px;
+      letter-spacing: .02em;
+      text-transform: uppercase
+    }
+
+    .mono.s {
+      font-size: 13px;
+      letter-spacing: .02em
+    }
+
+    .mut {
+      color: var(--g4)
+    }
+
+    .dark .mut {
+      color: #a3a6ab
+    }
+
+    .dot {
+      font-family: "Doto", "Space Mono", monospace;
+      font-weight: 700;
+      font-variation-settings: "ROND" 100;
+      text-transform: uppercase;
+      letter-spacing: -.02em;
+      line-height: .85;
+      font-variant-numeric: tabular-nums
+    }
+
+    .foil {
+      background-image: var(--foil);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent
+    }
+
+    .dark .foil {
+      background-image: var(--foil-d)
+    }
+
+    .d0 {
+      font-size: 200px;
+      line-height: .86;
+      letter-spacing: -.06em
+    }
+
+    .d1 {
+      font-size: 150px;
+      line-height: .9;
+      letter-spacing: -.058em
+    }
+
+    .d2 {
+      font-size: 104px;
+      line-height: .93;
+      letter-spacing: -.052em
+    }
+
+    .d3 {
+      font-size: 72px;
+      line-height: .96;
+      letter-spacing: -.046em
+    }
+
+    .d4 {
+      font-size: 40px;
+      line-height: 1.02;
+      letter-spacing: -.035em
+    }
+
+    .d5 {
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -.025em
+    }
+
+    .p {
+      font-size: 22px;
+      line-height: 1.38;
+      letter-spacing: -.016em;
+      color: var(--dg1);
+      max-width: 600px
+    }
+
+    .dark .p {
+      color: #b4b6bb
+    }
+
+    code.i {
+      font-family: "Space Mono", monospace;
+      font-size: .78em;
+      letter-spacing: 0;
+      background: var(--g1);
+      padding: 2px 7px;
+      color: var(--black)
+    }
+
+    .dark code.i {
+      background: var(--dg2);
+      color: var(--white)
+    }
+
+    /* ---------- cadre ---------- */
+    .frame {
+      position: absolute;
+      left: var(--m);
+      right: var(--m);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+      z-index: 20;
+      pointer-events: none
+    }
+
+    .frame.top {
+      top: 0;
+      height: 64px;
+      padding-top: 6px;
+      border-bottom: 1px solid currentColor
+    }
+
+    .frame.bot {
+      bottom: 0;
+      height: 56px;
+      border-top: 1px solid currentColor
+    }
+
+    .frame>:nth-child(3) {
+      justify-self: end;
+      text-align: right
+    }
+
+    .frame .ctr {
+      text-align: center
+    }
+
+    .x {
+      position: absolute;
+      width: 15px;
+      height: 15px
+    }
+
+    .x::before,
+    .x::after {
+      content: "";
+      position: absolute;
+      background: currentColor
+    }
+
+    .x::before {
+      left: 7px;
+      top: 0;
+      width: 1px;
+      height: 15px
+    }
+
+    .x::after {
+      top: 7px;
+      left: 0;
+      height: 1px;
+      width: 15px
+    }
+
+    .top .x {
+      bottom: -8px
+    }
+
+    .bot .x {
+      top: -8px
+    }
+
+    .x.l {
+      left: -8px
+    }
+
+    .x.r {
+      right: -8px
+    }
+
+    .frame .nav {
+      pointer-events: auto;
+      display: inline-flex;
+      gap: 14px;
+      align-items: center
+    }
+
+    .frame .nav button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      padding: 4px 0
+    }
+
+    .frame .nav button:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px
+    }
+
+    .rail {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 20
+    }
+
+    .rail i {
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: .35;
+      transition: all .3s steps(4);
+      cursor: pointer
+    }
+
+    .rail i.past {
+      opacity: .9
+    }
+
+    .rail i.on {
+      height: 22px;
+      border-radius: 2px;
+      opacity: 1
+    }
+
+    /* ---------- slides ---------- */
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 112px var(--m) 100px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .28s steps(5), visibility 0s .28s
+    }
+
+    .slide.on {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity .28s steps(5)
+    }
+
+    .slide.dark {
+      background: var(--black);
+      color: var(--white)
+    }
+
+    .lay {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      height: 100%;
+      column-gap: 0
+    }
+
+    .lay>.code {
+      padding-top: 4px
+    }
+
+    .main {
+      min-width: 0;
+      position: relative;
+      height: 100%
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start
+    }
+
+    .split>* {
+      min-width: 0
+    }
+
+    .split.r {
+      grid-template-columns: 1.15fr .85fr
+    }
+
+    .split.l {
+      grid-template-columns: .8fr 1.2fr
+    }
+
+    .bottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0
+    }
+
+    .hr {
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1.2s var(--ease)
+    }
+
+    .hr.g {
+      background: var(--g2)
+    }
+
+    .dark .hr.g {
+      background: #35363b
+    }
+
+    .in .hr {
+      transform: scaleX(1)
+    }
+
+    /* reveal */
+    .w {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: top;
+      padding: 0 .02em .1em;
+      margin: 0 -.02em -.1em
+    }
+
+    .w__i {
+      display: inline-block;
+      transform: translate3d(0, 108%, 0);
+      transition: transform 1s var(--ease)
+    }
+
+    .in .w__i {
+      transform: none
+    }
+
+    .fx {
+      opacity: 0;
+      transform: translate3d(0, 16px, 0);
+      transition: opacity .7s var(--ease), transform .9s var(--ease)
+    }
+
+    .in .fx {
+      opacity: 1;
+      transform: none
+    }
+
+    .dx {
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path .9s steps(9)
+    }
+
+    .in .dx {
+      clip-path: inset(0 0 0 0)
+    }
+
+    /* tableaux */
+    .tbl>div {
+      display: grid;
+      align-items: baseline;
+      gap: 24px;
+      padding: 17px 0;
+      border-bottom: 1px solid var(--g2)
+    }
+
+    .dark .tbl>div {
+      border-color: #35363b
+    }
+
+    .tbl>div:first-child {
+      border-top: 1px solid var(--g2)
+    }
+
+    .dark .tbl>div:first-child {
+      border-color: #35363b
+    }
+
+    .tbl .t {
+      font-size: 24px;
+      letter-spacing: -.022em
+    }
+
+    .c3 {
+      grid-template-columns: 220px 1fr auto
+    }
+
+    .c2 {
+      grid-template-columns: 200px 1fr
+    }
+
+    .c4 {
+      grid-template-columns: 60px 1fr
+    }
+
+    /* code */
+    pre.code {
+      background: var(--g1);
+      font-family: "Space Mono", monospace;
+      font-size: 20px;
+      line-height: 1.62;
+      letter-spacing: 0;
+      padding: 26px 30px;
+      white-space: pre;
+      overflow: hidden;
+      color: var(--black)
+    }
+
+    pre.code.sm {
+      font-size: 18px;
+      padding: 22px 26px
+    }
+
+    .dark pre.code {
+      background: var(--dg2);
+      color: var(--white)
+    }
+
+    .code .t,
+    .code .sl {
+      font-weight: 700
+    }
+
+    .code .a,
+    .code .pr {
+      color: var(--g5)
+    }
+
+    .code .v {
+      color: var(--dg1)
+    }
+
+    .code .c {
+      color: var(--g4);
+      font-style: italic
+    }
+
+    .code .p {
+      color: var(--g4)
+    }
+
+    .code .at {
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 4px
+    }
+
+    /* toggles · style FR / EN */
+    .tg {
+      display: inline-flex;
+      gap: 18px;
+      align-items: center;
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      letter-spacing: .02em;
+      text-transform: uppercase
+    }
+
+    .tg button {
+      font: inherit;
+      color: var(--g4);
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 6px 0;
+      text-transform: inherit;
+      letter-spacing: inherit;
+      border-bottom: 1px solid transparent
+    }
+
+    .tg button:hover {
+      color: currentColor
+    }
+
+    .tg button.on {
+      color: var(--black);
+      border-bottom-color: var(--black)
+    }
+
+    .dark .tg button.on {
+      color: var(--white);
+      border-bottom-color: var(--white)
+    }
+
+    .tg .sep {
+      color: var(--g4)
+    }
+
+    /* boutons */
+    .btn {
+      font-family: "Space Mono", monospace;
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      background: var(--black);
+      color: var(--white);
+      border: 0;
+      padding: 17px 46px;
+      cursor: pointer;
+      transition: background .2s steps(3)
+    }
+
+    .btn:hover {
+      background: var(--dg1)
+    }
+
+    .dark .btn {
+      background: var(--white);
+      color: var(--black)
+    }
+
+    .dark .btn:hover {
+      background: var(--g3)
+    }
+
+    .ghost {
+      font-family: "Space Mono", monospace;
+      font-size: 13px;
+      background: none;
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      letter-spacing: 0
+    }
+
+    .ghost::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 1px solid currentColor
+    }
+
+    .ghost.on::before {
+      background: currentColor;
+      animation: blink 1s steps(2) infinite
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: .25
+      }
+    }
+
+    /* égaliseur de points */
+    .eq {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      justify-items: center;
+      row-gap: 14px
+    }
+
+    .eq i {
+      display: block;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--g2);
+      transition: background-color .14s steps(2)
+    }
+
+    .eq i.l1 {
+      background: var(--g3)
+    }
+
+    .eq i.l2 {
+      background: #a3a6ab
+    }
+
+    .eq i.l3 {
+      background: #6b6e75
+    }
+
+    .eq i.l4 {
+      background: var(--dg1)
+    }
+
+    .eq i.l5 {
+      background: var(--black)
+    }
+
+    /* anatomie */
+    .anat {
+      font-family: "Space Mono", monospace;
+      font-size: 40px;
+      letter-spacing: -.02em;
+      white-space: nowrap;
+      margin: 8px 0 56px
+    }
+
+    .anat .pt {
+      transition: background .15s steps(2), color .15s steps(2);
+      cursor: pointer;
+      padding: 6px 2px
+    }
+
+    .anat .pt.hl {
+      background: var(--black);
+      color: var(--white)
+    }
+
+    .anat.dim .pt:not(.hl) {
+      color: var(--g3)
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--black)
+    }
+
+    .legend .it {
+      padding: 18px 22px 0 0;
+      cursor: pointer;
+      transition: opacity .2s
+    }
+
+    .legend .it+.it {
+      padding-left: 20px;
+      border-left: 1px solid var(--g2)
+    }
+
+    .legend.dim .it:not(.hl) {
+      opacity: .28
+    }
+
+    .legend .it b {
+      display: block;
+      font-weight: 500;
+      font-size: 26px;
+      letter-spacing: -.03em;
+      margin: 14px 0 10px
+    }
+
+    .legend .it span {
+      font-size: 18px;
+      line-height: 1.4;
+      color: var(--dg1);
+      letter-spacing: -.01em;
+      display: block
+    }
+
+    /* structure */
+    .struct {
+      background: var(--g1);
+      padding: 18px 0;
+      overflow: hidden
+    }
+
+    .struct .ln {
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      line-height: 1.75;
+      padding: 0 24px;
+      white-space: pre;
+      cursor: pointer;
+      letter-spacing: 0;
+      transition: background .12s steps(2), color .12s steps(2)
+    }
+
+    .struct .ln:hover {
+      background: var(--g2)
+    }
+
+    .struct .ln.on {
+      background: var(--black);
+      color: var(--white)
+    }
+
+    .expl .num {
+      font-size: 120px
+    }
+
+    .expl .d4 {
+      margin: 26px 0 16px
+    }
+
+    /* imbrication */
+    .nest-vis {
+      position: relative;
+      height: 330px
+    }
+
+    .nb {
+      position: absolute;
+      border: 1px solid var(--black);
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      padding: 12px 14px;
+      letter-spacing: 0;
+      transition: all .7s var(--ease)
+    }
+
+    .nb.p {
+      left: 0;
+      top: 0;
+      width: 470px;
+      height: 300px
+    }
+
+    .nb.st {
+      left: 100px;
+      top: 96px;
+      width: 250px;
+      height: 130px;
+      background: var(--g1)
+    }
+
+    .nest[data-mode="bad"] .nb.st {
+      left: 310px;
+      top: 150px;
+      width: 240px;
+      background: repeating-linear-gradient(-45deg, transparent 0 7px, var(--g2) 7px 8px);
+      border-style: dashed
+    }
+
+    .nb .x {
+      opacity: 0;
+      transition: opacity .3s steps(3)
+    }
+
+    .nest[data-mode="bad"] .nb .x {
+      opacity: 1
+    }
+
+    .nb .x.c1 {
+      right: -8px;
+      top: -8px
+    }
+
+    .nb .x.c2 {
+      left: 152px;
+      bottom: -8px
+    }
+
+    /* éditeur live */
+    .live {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 540px;
+      border: 1px solid var(--g2)
+    }
+
+    .live .eds {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--g1)
+    }
+
+    .live .tabh {
+      font-family: "Space Mono", monospace;
+      font-size: 13px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--g2);
+      display: flex;
+      justify-content: space-between;
+      color: var(--g5)
+    }
+
+    .live textarea {
+      flex: 1;
+      width: 100%;
+      resize: none;
+      border: 0;
+      outline: 0;
+      padding: 18px 20px;
+      background: transparent;
+      color: var(--black);
+      font-family: "Space Mono", monospace;
+      font-size: 19px;
+      line-height: 1.6;
+      white-space: pre;
+      tab-size: 2;
+      letter-spacing: 0
+    }
+
+    .live textarea:focus {
+      background: #efeff1
+    }
+
+    .live .pv {
+      display: flex;
+      flex-direction: column;
+      min-width: 0
+    }
+
+    .live iframe {
+      flex: 1;
+      width: 100%;
+      border: 0;
+      background: #fff
+    }
+
+    /* sémantique */
+    .wf {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: "Space Mono", monospace;
+      font-size: 17px;
+      letter-spacing: 0
+    }
+
+    .wf .b {
+      border: 1px solid var(--g4);
+      padding: 16px 18px;
+      position: relative;
+      transition: border-color .3s steps(3), background .3s steps(3)
+    }
+
+    .wf .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .wf .in2 {
+      border: 1px dashed var(--g4);
+      padding: 8px 12px
+    }
+
+    .wf .main2 {
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .wf .sec {
+      border: 1px solid var(--g4);
+      padding: 12px;
+      flex: 1;
+      min-width: 0;
+      font-size: 15px;
+      overflow-wrap: anywhere
+    }
+
+    .wf .sem {
+      display: none
+    }
+
+    .semw[data-mode="sem"] .wf .sem {
+      display: inline;
+      font-weight: 700
+    }
+
+    .semw[data-mode="sem"] .wf .div {
+      display: none
+    }
+
+    .semw[data-mode="sem"] .wf .b,
+    .semw[data-mode="sem"] .wf .sec {
+      border-color: var(--black)
+    }
+
+    .semw[data-mode="sem"] .wf .in2 {
+      border-color: var(--black)
+    }
+
+    .semw[data-mode="div"] .wf {
+      color: var(--g4)
+    }
+
+    /* sélecteurs */
+    .selp input {
+      font-family: "Space Mono", monospace;
+      font-size: 32px;
+      letter-spacing: -.01em;
+      padding: 10px 0;
+      border: 0;
+      border-bottom: 1px solid var(--black);
+      background: transparent;
+      width: 100%;
+      outline: 0;
+      color: var(--black)
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      margin: 22px 0 30px
+    }
+
+    .chips button {
+      font-family: "Space Mono", monospace;
+      font-size: 17px;
+      padding: 4px 0;
+      border: 0;
+      border-bottom: 1px solid var(--g4);
+      background: none;
+      cursor: pointer;
+      color: var(--dg1);
+      letter-spacing: 0
+    }
+
+    .chips button:hover {
+      border-color: var(--black);
+      color: var(--black)
+    }
+
+    .tree {
+      font-family: "Space Mono", monospace;
+      font-size: 14px;
+      letter-spacing: 0
+    }
+
+    .tree * {
+      display: block;
+      border: 1px solid var(--g4);
+      padding: 26px 10px 8px;
+      margin: 6px 0;
+      position: relative;
+      background: #fff;
+      color: var(--dg1);
+      text-decoration: none;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.2;
+      transition: background .15s steps(2), color .15s steps(2), border-color .15s steps(2)
+    }
+
+    .tree *::before {
+      content: attr(data-l);
+      position: absolute;
+      top: 5px;
+      left: 9px;
+      font-size: 12px;
+      color: var(--g4);
+      text-transform: uppercase;
+      letter-spacing: .02em
+    }
+
+    .tree nav,
+    .tree main {
+      display: flex;
+      gap: 6px
+    }
+
+    .tree nav>*,
+    .tree main>* {
+      flex: 1;
+      margin: 0
+    }
+
+    .tree .hit {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black)
+    }
+
+    .tree .hit::before {
+      color: #c4c6ca
+    }
+
+    /* box model */
+    .bm {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 56px;
+      align-items: start
+    }
+
+    .ctrl label {
+      display: grid;
+      grid-template-columns: 100px 1fr 46px;
+      align-items: center;
+      gap: 16px;
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--g2)
+    }
+
+    .ctrl label:first-child {
+      border-top: 1px solid var(--g2)
+    }
+
+    .ctrl output {
+      text-align: right
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 1px;
+      background: var(--black);
+      outline: 0
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--black);
+      cursor: pointer
+    }
+
+    input[type=range]::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--black);
+      border: 0
+    }
+
+    .bmv {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 540px;
+      background: var(--g1);
+      position: relative
+    }
+
+    .bm-m {
+      background: repeating-linear-gradient(-45deg, transparent 0 6px, #a3a6ab 6px 7px);
+      outline: 1px dashed var(--g4)
+    }
+
+    .bm-b {
+      border-style: solid;
+      border-color: var(--black);
+      background: var(--g2)
+    }
+
+    .bm-p {
+      background: var(--g2)
+    }
+
+    .bm-c {
+      background: #fff;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      text-align: center;
+      line-height: 1.4;
+      letter-spacing: 0;
+      text-transform: uppercase
+    }
+
+    .bm-tot {
+      margin-top: 28px
+    }
+
+    .bm-tot .dot {
+      font-size: 84px;
+      display: block;
+      margin-top: 10px
+    }
+
+    .bm-legend {
+      position: absolute;
+      left: 20px;
+      bottom: 16px;
+      display: flex;
+      gap: 18px
+    }
+
+    .bm-legend i {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      vertical-align: -1px;
+      margin-right: 6px;
+      border: 1px solid var(--black)
+    }
+
+    /* flex */
+    .fxw {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 56px
+    }
+
+    .opt {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--g2)
+    }
+
+    .opt:first-child {
+      border-top: 1px solid var(--g2)
+    }
+
+    .opt .mono {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--g5)
+    }
+
+    .opt .tg {
+      flex-wrap: wrap;
+      gap: 4px 16px;
+      text-transform: none
+    }
+
+    .fxbox {
+      height: 430px;
+      background: var(--g1);
+      display: flex;
+      padding: 16px
+    }
+
+    .fxbox div {
+      background: var(--black);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 110px;
+      min-height: 80px;
+      font-family: "Doto", monospace;
+      font-weight: 700;
+      font-variation-settings: "ROND" 100;
+      font-size: 52px
+    }
+
+    .fxbox div:nth-child(2) {
+      min-height: 150px;
+      background: var(--dg1)
+    }
+
+    .fxbox div:nth-child(3) {
+      min-height: 110px;
+      background: var(--g5)
+    }
+
+    .fxbox div:nth-child(4) {
+      min-height: 90px
+    }
+
+    .fxbox div:nth-child(5) {
+      min-height: 120px;
+      background: var(--dg1)
+    }
+
+    /* responsive */
+    .rsp-wrap {
+      height: 520px;
+      background: var(--g1);
+      display: flex;
+      justify-content: center;
+      overflow: hidden
+    }
+
+    .rsp-wrap iframe {
+      height: 100%;
+      border: 0;
+      border-left: 1px solid var(--black);
+      border-right: 1px solid var(--black);
+      background: #fff;
+      transition: width .08s
+    }
+
+    .rsp-ctrl {
+      display: grid;
+      grid-template-columns: auto 1fr auto 260px;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 22px
+    }
+
+    .rsp-ctrl .st {
+      text-align: right
+    }
+
+    /* exos */
+    .timer {
+      font-size: 250px;
+      line-height: .8;
+      margin-left: -6px;
+      white-space: nowrap
+    }
+
+    .timer.end {
+      animation: blink .6s steps(2) infinite
+    }
+
+    .tctl {
+      display: flex;
+      gap: 28px;
+      margin-top: 34px;
+      align-items: center
+    }
+
+    .tctl button {
+      font-family: "Space Mono", monospace;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      background: none;
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      padding: 6px 0;
+      border-bottom: 1px solid transparent
+    }
+
+    .tctl button:hover {
+      border-color: currentColor
+    }
+
+    .tctl .btn {
+      border: 0;
+      padding: 17px 46px
+    }
+
+    .exl a {
+      display: grid;
+      grid-template-columns: 70px 1fr auto;
+      gap: 18px;
+      align-items: baseline;
+      padding: 22px 0;
+      border-bottom: 1px solid #35363b;
+      color: inherit;
+      text-decoration: none;
+      transition: padding .4s var(--ease)
+    }
+
+    .exl a:first-child {
+      border-top: 1px solid #35363b
+    }
+
+    .exl a:hover {
+      padding-left: 14px
+    }
+
+    .exl a b {
+      font-weight: 500;
+      font-size: 32px;
+      letter-spacing: -.04em;
+      line-height: 1
+    }
+
+    .exl a .go {
+      color: #a3a6ab
+    }
+
+    .exl a:hover .go {
+      color: #fff
+    }
+
+    /* divers */
+    .kbd {
+      display: inline-block;
+      font-family: "Space Mono", monospace;
+      font-size: 16px;
+      letter-spacing: 0;
+      border: 1px solid var(--g4);
+      padding: 3px 9px;
+      margin-right: 4px;
+      min-width: 30px;
+      text-align: center;
+      text-transform: none;
+      background: #fff
+    }
+
+    .tree-files {
+      font-family: "Space Mono", monospace;
+      font-size: 26px;
+      line-height: 1.7;
+      white-space: pre;
+      letter-spacing: -.01em
+    }
+
+    .tree-files .mut {
+      font-size: 15px
+    }
+
+    .qr {
+      width: 220px;
+      height: 220px
+    }
+
+    .qr img,
+    .qr canvas {
+      display: block;
+      width: 220px !important;
+      height: 220px !important;
+      image-rendering: pixelated
+    }
+
+    .color {
+      background: linear-gradient(135deg, #d9653b 0%, #b33a2c 28%, #2f4e72 72%, #1b2b45 100%);
+      color: #fff;
+      position: relative;
+      overflow: hidden
+    }
+
+    .color::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, .18) 1px, transparent 1.2px);
+      background-size: 6px 6px;
+      mix-blend-mode: overlay
+    }
+
+    .vs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 520px
+    }
+
+    .vs>div {
+      padding: 34px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1
+    }
+
+    .vs>div:first-child {
+      border: 1px solid var(--g2);
+      border-right: 0
+    }
+
+    .hier>div {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      align-items: baseline;
+      border-bottom: 1px solid var(--g2);
+      padding: 6px 0
+    }
+
+    .formdemo label {
+      display: block;
+      font-family: "Space Mono", monospace;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      color: var(--g5);
+      margin: 14px 0 4px
+    }
+
+    .formdemo input,
+    .formdemo textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 20px;
+      letter-spacing: -.02em;
+      border: 0;
+      border-bottom: 1px solid var(--black);
+      padding: 8px 0;
+      background: transparent;
+      outline: 0;
+      resize: none;
+      color: var(--black)
+    }
+
+    .formdemo input:focus,
+    .formdemo textarea:focus {
+      border-bottom-width: 2px
+    }
+
+    .formdemo .btn {
+      margin-top: 26px
+    }
+
+    .formdemo .msg {
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      margin-top: 12px;
+      min-height: 18px
+    }
+
+    .cover .bottom {
+      left: var(--m);
+      right: var(--m);
+      bottom: 100px
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 3px
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--black);
+      outline-offset: 3px
+    }
+
+    .dark .btn:focus-visible {
+      outline-color: var(--white)
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+
+      .w__i,
+      .fx,
+      .dx,
+      .hr {
+        transition: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+        clip-path: none !important
+      }
+    }
+
+    .cp {
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      background: none;
+      border: 0;
+      border-bottom: 1px solid currentColor;
+      color: inherit;
+      cursor: pointer;
+      padding: 4px 0
+    }
+
+    .linkbox {
+      font-family: "Space Mono", monospace;
+      font-size: 24px;
+      letter-spacing: -.01em;
+      line-height: 1.35;
+      padding: 18px 0;
+      border-top: 1px solid currentColor;
+      border-bottom: 1px solid var(--g2)
+    }
+
+    .checkin {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 30px;
+      border-top: 1px solid #35363b
+    }
+
+    .checkin>div {
+      padding: 16px 0
+    }
+
+    .checkin>div+div {
+      padding-left: 20px;
+      border-left: 1px solid #35363b
+    }
+
+    .checkin .dot {
+      font-size: 60px;
+      display: block;
+      margin: 12px 0 10px
+    }
+
+    .lk {
+      display: grid;
+      grid-template-columns: 110px 1fr auto;
+      gap: 16px;
+      align-items: baseline;
+      padding: 16px 0;
+      border-top: 1px solid var(--black);
+      border-bottom: 1px solid var(--g2);
+      color: inherit;
+      text-decoration: none;
+      font-size: 20px;
+      letter-spacing: -.02em
+    }
+
+    .lk:hover {
+      padding-left: 8px;
+      transition: padding .4s var(--ease)
+    }
+
+    .demo-b {
+      background: var(--g1);
+      border: 1px solid var(--g4);
+      padding: 12px 14px;
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      letter-spacing: 0
+    }
+
+    .demo-i {
+      background: var(--black);
+      color: var(--white);
+      padding: 2px 6px
+    }
+
+    .demo-ib {
+      display: inline-block;
+      width: 120px;
+      height: 60px;
+      background: var(--black);
+      color: var(--white);
+      font-family: "Space Mono", monospace;
+      font-size: 14px;
+      line-height: 60px;
+      text-align: center;
+      letter-spacing: 0
+    }
+
+    .pseudo-demo .pd-btn {
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      text-transform: uppercase;
+      background: var(--black);
+      color: var(--white);
+      border: 0;
+      padding: 18px 40px;
+      cursor: pointer;
+      transition: background .2s steps(3)
+    }
+
+    .pseudo-demo .pd-btn:hover {
+      background: var(--g4)
+    }
+
+    .pseudo-demo .pd-btn:focus {
+      outline: 3px solid var(--black);
+      outline-offset: 4px
+    }
+
+    .pseudo-demo .pd-list {
+      list-style: none;
+      border-top: 1px solid var(--black)
+    }
+
+    .pseudo-demo .pd-list li {
+      padding: 14px 12px;
+      font-size: 22px;
+      letter-spacing: -.02em;
+      border-bottom: 1px solid var(--g2)
+    }
+
+    .pseudo-demo .pd-list li:nth-child(odd) {
+      background: var(--g1)
+    }
+
+    .pseudo-demo .pd-list li:first-child {
+      font-weight: 700
+    }
+
+    .pseudo-demo .pd-list li::before {
+      content: "→ ";
+      color: var(--g4)
+    }
+
+    .var-demo {
+      --fond: #ffffff;
+      --texte: #1a1b1d;
+      background: var(--fond);
+      color: var(--texte);
+      border: 1px solid var(--g4);
+      border-radius: 12px;
+      padding: 30px;
+      height: 330px;
+      transition: background .3s steps(4), color .3s steps(4)
+    }
+
+    .var-demo.dark-th {
+      --fond: #1a1b1d;
+      --texte: #f5f5f6
+    }
+
+    .pos-parent {
+      position: relative;
+      height: 470px;
+      background: var(--g1);
+      border: 1px dashed var(--g4);
+      padding: 40px 24px 24px
+    }
+
+    .pos-l {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      color: var(--g4)
+    }
+
+    .pos-sib {
+      background: #fff;
+      border: 1px solid var(--g4);
+      padding: 20px;
+      margin: 10px 0;
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      letter-spacing: 0
+    }
+
+    .pos-box {
+      background: var(--black);
+      color: var(--white);
+      padding: 20px;
+      margin: 10px 0;
+      width: 200px;
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      letter-spacing: 0;
+      z-index: 3
+    }
+
+    .grid-demo {
+      display: grid;
+      grid-template-columns: 150px 1fr 1fr;
+      grid-template-rows: 80px 1fr 70px;
+      grid-template-areas: "h h h" "n m m" "f f f";
+      gap: 12px;
+      height: 520px
+    }
+
+    .grid-demo>div {
+      background: var(--g1);
+      border: 1px solid var(--g4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Doto", monospace;
+      font-weight: 700;
+      font-variation-settings: "ROND" 100;
+      font-size: 44px;
+      text-transform: uppercase
+    }
+
+    .grid-demo>div:nth-child(3) {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black)
+    }
+
+    .exl2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 48px
+    }
+
+    .exl2 a {
+      padding: 13px 0
+    }
+
+    .exl2 a:nth-child(2) {
+      border-top: 1px solid #35363b
+    }
+
+    .exl2 a b {
+      font-size: 24px
+    }
+
+    .opt-card {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      border-top: 1px solid #35363b;
+      padding-top: 14px
+    }
+
+    a.opt-card:hover .d5 {
+      text-decoration: underline;
+      text-underline-offset: 6px
+    }
+
+    .webflow {
+      display: grid;
+      grid-template-columns: 1fr 150px 1fr 150px 1fr;
+      align-items: center;
+      gap: 18px
+    }
+
+    .webflow .wb {
+      border: 1px solid var(--g4);
+      padding: 22px;
+      min-height: 230px
+    }
+
+    .webflow .wb .d4 {
+      font-size: 30px;
+      margin: 26px 0 10px
+    }
+
+    .webflow .wb.dk {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black)
+    }
+
+    .webflow .wb.dk .mono {
+      color: #a3a6ab
+    }
+
+    .webflow .files {
+      color: var(--white);
+      font-size: 17px;
+      line-height: 1.7;
+      margin-top: 18px;
+      text-transform: none
+    }
+
+    .webflow .wa {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: center
+    }
+
+    #help {
+      position: fixed;
+      bottom: 14px;
+      right: 16px;
+      font-family: "Space Mono", monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      color: var(--g5);
+      z-index: 40;
+      transition: opacity .6s steps(4);
+      pointer-events: none
+    }
+  </style>
+</head>
+
+<body>
+  <div id="stage">
+
+    <!-- ======================================================= 00 · OUVERTURE -->
+    <section class="slide cover" data-sec="MMI" data-t="00:00" data-cap="Allumez vos ordis · ouvrez VS Code">
+      <div class="eq" id="eq" style="height:420px;margin:10px 30px 0"></div>
+      <div class="bottom" style="display:flex;justify-content:space-between;align-items:flex-end">
+        <div class="dot d0 dx" style="font-size:132px">HTML / CSS.</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px" class="fx">
+          <button class="btn" data-go="1">Commencer</button>
+          <span class="ghost on" style="cursor:default">Un cours de Thomas Riquier</span>
+          <span class="mono s">1h45 · espace ou entrée</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Bonjour" data-t="00:01" data-cap="Freelance · Omniscient Project · ECV Bordeaux">
+      <div class="lay">
+        <div class="code mono s scr" data-c="00 · 02 :0002::01"></div>
+        <div class="main split r">
+          <div>
+            <span class="mono">Votre intervenant</span>
+            <div class="d1 rv" style="margin-top:26px">Thomas<br>Riquier.</div>
+            <div class="dot foil dx" style="font-size:120px;margin-top:34px">Bonjour.</div>
+          </div>
+          <div style="padding-top:30px">
+            <div class="tbl">
+              <div class="c2 fx" style="grid-template-columns:170px 1fr;padding:22px 0"><span class="mono">01 ·
+                  Métier</span><span class="d4">Freelance</span></div>
+              <div class="c2 fx" style="grid-template-columns:170px 1fr;padding:22px 0"><span class="mono">02 ·
+                  Studio</span><span class="d4">Omniscient Project</span></div>
+              <div class="c2 fx" style="grid-template-columns:170px 1fr;padding:22px 0"><span class="mono">03 · Né en
+                  MMI</span><span class="d4">Omniscient Design</span></div>
+              <div class="c2 fx" style="grid-template-columns:170px 1fr;padding:22px 0"><span class="mono">04 ·
+                  Formation</span><span class="d4">Mastère UX/UI<br><span class="mut">ECV Bordeaux</span></span></div>
+            </div>
+            <a class="fx lk" href="https://www.linkedin.com/in/thomas-riquier-116043294/" target="_blank" rel="noopener"
+              style="margin-top:26px"><span
+                class="mono">LinkedIn</span><span>linkedin.com/in/thomas-riquier-116043294</span><span
+                class="mono">↗</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Le déroulé" data-t="00:03" data-cap="Un échange">
+      <div class="lay">
+        <div class="code mono s scr" data-c="00 · 03 :0003::03"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:46px">1h45 de cours.<br><span class="mut">Puis vous codez.</span>
+          </div>
+          <div class="tbl">
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">00:00 → 00:07</span><span
+                class="t">Ouverture</span><span class="mono mut">présentations</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">00:07 → 00:14</span><span class="t">Le web ·
+                comment ça marche, HTML, CSS</span><span class="mono">00</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">00:14 → 00:21</span><span
+                class="t">L'environnement · éditeur, raccourcis, dossiers</span><span class="mono">01</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">00:21 → 00:54</span><span class="t">HTML ·
+                syntaxe, structure d'une page, sémantique, liens, images, formulaires</span><span class="mono">02</span>
+            </div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">00:54 → 01:37</span><span class="t">CSS ·
+                sélecteurs, box model, position, Flexbox, Grid, responsive</span><span class="mono">03</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">01:37 → 01:45</span><span class="t">Bilan,
+                installation de l'atelier</span><span class="mono">04</span></div>
+            <div class="c3 fx" style="padding:14px 0;color:var(--g4)"><span class="mono">Ensuite</span><span
+                class="t">Les 12 exercices, en autonomie</span><span class="mono">site</span></div>
+            <div class="c3 fx" style="padding:14px 0;color:var(--g4)"><span class="mono">Puis</span><span
+                class="t">L'intégration de la maquette One Page</span><span class="mono">rendu</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Après le cours" data-t="00:05"
+      data-cap="Les exercices d'abord · la maquette ensuite">
+      <div class="lay">
+        <div class="code mono s scr" data-c="00 · 04 :0004::05"></div>
+        <div class="main split r">
+          <div>
+            <div class="d1 rv">One</div>
+            <div class="dot foil dx" style="font-size:190px;margin-top:6px">Page.</div>
+          </div>
+          <div style="padding-top:18px">
+            <span class="mono fx">Après le cours · en autonomie</span>
+            <p class="p fx" style="font-size:24px;color:var(--black);margin:16px 0 34px">D'abord les 12 exercices du
+              site. Ensuite, vous intégrez une maquette One Page en HTML et CSS.</p>
+            <div class="tbl">
+              <div class="c4 fx"><span class="mono">01</span><span class="t">Les exercices 01 → 12, sur le site</span>
+              </div>
+              <div class="c4 fx"><span class="mono">02</span><span class="t">La maquette : la refonte MusBA <span
+                    class="mut">(Figma)</span>, ou votre maquette Photoshop de l'atelier jeux vidéo</span></div>
+              <div class="c4 fx"><span class="mono">03</span><span class="t">HTML sémantique d'abord, CSS ensuite</span>
+              </div>
+              <div class="c4 fx"><span class="mono">04</span><span class="t">Vérifiée sur mobile et au validateur
+                  W3C</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Le contrat" data-t="00:06" data-cap="Le lien du site d'exercices">
+      <div class="lay">
+        <div class="code mono s scr" data-c="00 · 05 :0005::06"></div>
+        <div class="main split r">
+          <div>
+            <div class="d3 rv" style="margin-bottom:34px">Je montre.<br>Vous suivez.<br><span class="mut">Vous codez
+                après.</span></div>
+            <div class="tbl">
+              <div class="c2 fx"><span class="mono">Pendant</span><span class="t">Regardez, testez à côté si vous
+                  voulez. Questions au micro, à tout moment.</span></div>
+              <div class="c2 fx"><span class="mono">Les démos</span><span class="t">Les slides sont interactifs : je les
+                  manipule en direct.</span></div>
+              <div class="c2 fx"><span class="mono">Après</span><span class="t">12 exercices, vérifiés automatiquement.
+                  Pas de note.</span></div>
+              <div class="c2 fx"><span class="mono">Puis</span><span class="t">La maquette One Page.</span></div>
+            </div>
+          </div>
+          <div class="fx" style="padding-top:8px">
+            <span class="mono">Le site d'exercices</span>
+            <p class="linkbox" style="margin-top:16px">https://html-css.viturna.fr/</p>
+            <div style="display:flex;gap:26px;margin-top:20px;align-items:center"><button class="cp"
+                data-copy="https://html-css.viturna.fr">Copier le lien</button><span
+                class="mono s mut cpst"></span></div>
+            <p class="p" style="margin-top:34px;font-size:19px">Gardez VS Code ouvert à côté : un écran pour le cours,
+              un pour tester.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Le web" data-t="00:07" data-cap="Front-end · ce qui tourne dans le navigateur">
+      <div class="lay">
+        <div class="code mono s scr" data-c="00 · 06 :0006::07"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:46px">Une page web,<br><span class="mut">comment ça arrive ?</span>
+          </div>
+          <div class="webflow">
+            <div class="fx wb"><span class="mono">01 · Vous</span>
+              <div class="d4">Le navigateur</div>
+              <p class="p" style="font-size:17px">Chrome, Firefox, Safari… Vous tapez une adresse.</p>
+            </div>
+            <div class="fx wa"><span class="mono">demande →</span>
+              <div class="hr"></div><span class="mono mut">monsite.fr</span>
+            </div>
+            <div class="fx wb"><span class="mono">02 · Le serveur</span>
+              <div class="d4">Un ordinateur, ailleurs</div>
+              <p class="p" style="font-size:17px">Allumé jour et nuit, il garde les fichiers du site.</p>
+            </div>
+            <div class="fx wa"><span class="mono">← renvoie</span>
+              <div class="hr"></div><span class="mono mut">des fichiers</span>
+            </div>
+            <div class="fx wb dk"><span class="mono">03 · Les fichiers</span>
+              <div class="files mono">index.html<br>style.css<br>script.js<br>photo.jpg</div>
+              <p style="font-size:17px;margin-top:10px">Le navigateur les lit et dessine la page.</p>
+            </div>
+          </div>
+          <div class="split" style="margin-top:44px;gap:48px">
+            <div class="fx">
+              <div class="hr" style="margin-bottom:14px"></div><span class="mono">Front-end · aujourd'hui</span>
+              <p class="p" style="margin-top:12px">Ce qui tourne dans le navigateur : HTML, CSS, JavaScript. Ce que l'on
+                voit et touche.</p>
+            </div>
+            <div class="fx">
+              <div class="hr g" style="margin-bottom:14px"></div><span class="mono mut">Back-end · plus tard</span>
+              <p class="p" style="margin-top:12px">Ce qui tourne sur le serveur : PHP, Node.js, bases de données. Les
+                comptes, les paiements, les données.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Trois langages" data-t="00:10"
+      data-cap="HTML et CSS ne calculent rien · ce sont des langages de description">
+      <div class="lay">
+        <div class="code mono s scr" data-c="00 · 07 :0007::10"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:46px">Trois langages,<br><span class="mut">trois rôles.</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px">
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div>
+              <div class="dot foil" style="font-size:96px">HTML</div>
+              <div class="d4" style="margin:22px 0 8px">Le squelette.</div>
+              <p class="p" style="font-size:18px">Ce que la page contient, et ce que chaque chose est : un titre, un
+                menu, un bouton.</p>
+              <script type="text/x-code" data-lang="html" data-size="sm"><button>Envoyer</button></script>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div>
+              <div class="dot foil" style="font-size:96px">CSS</div>
+              <div class="d4" style="margin:22px 0 8px">La peau.</div>
+              <p class="p" style="font-size:18px">À quoi ça ressemble : couleurs, tailles, typo, mise en page, mobile.
+              </p>
+              <script type="text/x-code" data-lang="css" data-size="sm">button { background: black; }</script>
+            </div>
+            <div class="fx" style="opacity:.55">
+              <div class="hr g" style="margin-bottom:18px"></div>
+              <div class="dot foil" style="font-size:96px">JS</div>
+              <div class="d4" style="margin:22px 0 8px">Les muscles.</div>
+              <p class="p" style="font-size:18px">Ce que ça fait : réagir au clic, afficher, calculer. Pas aujourd'hui.
+              </p>
+              <script type="text/x-code" data-lang="html" data-size="sm">button.onclick = envoyer;</script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="La règle" data-t="00:12"
+      data-cap="Le HTML en noir et blanc · le CSS en couleur · on ne mélange pas">
+      <div class="lay">
+        <div class="code mono s scr" data-c="00 · 08 :0008::12"></div>
+        <div class="main">
+          <div class="vs">
+            <div class="fx"><span class="mono">HTML · le squelette</span>
+              <div>
+                <div class="d1 rv">Le sens.</div>
+                <p class="p" style="margin-top:24px">« Ceci est un titre. Ceci est un menu. Ceci est un formulaire. » La
+                  structure, le contenu.</p>
+              </div>
+            </div>
+            <div class="color fx"><span class="mono" style="position:relative;z-index:1">CSS · la peau</span>
+              <div style="position:relative;z-index:1">
+                <div class="d1">L'allure.</div>
+                <p class="p" style="margin-top:24px;color:rgba(255,255,255,.82)">« Ce titre est rouge, en 64px, centré.
+                  » La présentation, les couleurs, la mise en page.</p>
+              </div>
+            </div>
+          </div>
+          <p class="mono fx" style="margin-top:26px">On ne choisit jamais une balise HTML pour son apparence.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="L'environnement" data-t="00:14" data-cap="L'éditeur, les raccourcis, les dossiers">
+      <div class="lay">
+        <div class="code mono s scr" data-c="01 · 09 :0009::14"></div>
+        <div class="main">
+          <div class="dot foil dx" style="font-size:440px;margin-top:-20px">01</div>
+          <div class="bottom">
+            <div class="hr" style="margin-bottom:26px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end">
+              <div class="d1 rv">L'environnement.</div>
+              <div class="mono fx" style="text-align:right;line-height:1.7">3 notions<br>7 minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Les éditeurs" data-t="00:15" data-cap="Ouvrez un dossier, pas un fichier">
+      <div class="lay">
+        <div class="code mono s scr" data-c="01 · 10 :0010::15"></div>
+        <div class="main split">
+          <div>
+            <div class="d3 rv" style="margin-bottom:34px">Un éditeur de code,<br><span class="mut">pas un traitement de
+                texte.</span></div>
+            <p class="p fx">Un IDE ou un éditeur de code colore la syntaxe, complète automatiquement, signale les
+              erreurs et aide à déboguer. Word ne fait rien de tout ça.</p>
+            <p class="mono fx" style="margin-top:36px">Réflexe · glisser le dossier du projet dans VS Code</p>
+          </div>
+          <div class="tbl">
+            <div class="c2 fx" style="grid-template-columns:190px 1fr"><span class="mono">VS Code</span><span
+                class="t">Gratuit, le standard actuel. <b>On utilise celui-là.</b></span></div>
+            <div class="c2 fx" style="grid-template-columns:190px 1fr"><span class="mono">WebStorm</span><span
+                class="t">Très puissant, édité par JetBrains.</span></div>
+            <div class="c2 fx" style="grid-template-columns:190px 1fr"><span class="mono">Sublime Text</span><span
+                class="t">Ultra léger, très rapide.</span></div>
+            <div class="c2 fx" style="grid-template-columns:190px 1fr"><span class="mono mut">Atom ·
+                Brackets</span><span class="t mut">Abandonnés. À éviter.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Raccourcis" data-t="00:17" data-cap="Ctrl sur Windows · Cmd sur Mac">
+      <div class="lay">
+        <div class="code mono s scr" data-c="01 · 11 :0011::17"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:26px">Les raccourcis.</div>
+          <div class="tbl">
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">!</span><span class="kbd">Tab</span></span><span class="t">Toute la structure HTML5, d'un
+                coup</span><span class="mono mut">Emmet</span></div>
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">Ctrl</span><span class="kbd">S</span></span><span class="t">Sauvegarder, donc recharger
+                Live Server</span><span class="mono mut">réflexe</span></div>
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">Ctrl</span><span class="kbd">/</span></span><span class="t">Commenter,
+                décommenter</span><span class="mono mut">tester</span></div>
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">Alt</span><span class="kbd">↑ ↓</span></span><span class="t">Déplacer la ligne</span><span
+                class="mono mut">ranger</span></div>
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">⇧</span><span class="kbd">Alt</span><span class="kbd">↓</span></span><span
+                class="t">Dupliquer la ligne</span><span class="mono mut">vite</span></div>
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">Ctrl</span><span class="kbd">D</span></span><span class="t">Multi-curseur sur l'occurrence
+                suivante</span><span class="mono mut">renommer</span></div>
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">ul&gt;li*3</span><span class="kbd">Tab</span></span><span class="t">Une liste de trois
+                éléments en une ligne</span><span class="mono mut">Emmet</span></div>
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">Alt</span><span class="kbd">clic</span></span><span class="t">Plusieurs curseurs, où vous
+                voulez</span><span class="mono mut">⌥ sur Mac</span></div>
+            <div class="c3 fx" style="grid-template-columns:260px 1fr auto;padding:12px 0"><span><span
+                  class="kbd">lorem10</span><span class="kbd">Tab</span></span><span class="t">Dix mots de faux
+                texte</span><span class="mono mut">Emmet</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="L'arborescence" data-t="00:19"
+      data-cap="Pas d'espace · pas d'accent · pas de majuscule">
+      <div class="lay">
+        <div class="code mono s scr" data-c="01 · 12 :0012::19"></div>
+        <div class="main split">
+          <div>
+            <div class="d3 rv" style="margin-bottom:50px">Un dossier.<br><span class="mut">Trois rangements.</span>
+            </div>
+            <div class="tbl">
+              <div class="c2 fx"><span class="mono">index.html</span><span class="t">La page d'accueil. Toujours ce
+                  nom-là.</span></div>
+              <div class="c2 fx"><span class="mono">css/</span><span class="t">Les styles.</span></div>
+              <div class="c2 fx"><span class="mono">img/</span><span class="t">Les images, bien nommées.</span></div>
+              <div class="c2 fx"><span class="mono">Nommage</span><span class="t">Minuscules, tirets, sans accent ni
+                  espace.</span></div>
+            </div>
+          </div>
+          <div class="tree-files fx" style="background:var(--g1);padding:36px 40px">mon-one-page/
+            ├── index.html
+            ├── css/
+            │ └── style.css
+            └── img/
+            ├── portrait.jpg
+            └── projet-01.jpg
+            <span class="mut">✕ Mon Site Final (2).html
+              ○ index.html</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="HTML" data-t="00:21" data-cap="HTML dit ce que les choses sont">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 13 :0013::21"></div>
+        <div class="main">
+          <div class="dot foil dx" style="font-size:440px;margin-top:-20px">02</div>
+          <div class="bottom">
+            <div class="hr" style="margin-bottom:26px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end">
+              <div class="d1 rv">HTML.</div>
+              <div class="mono fx" style="text-align:right;line-height:1.7">14 notions<br>33 minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Anatomie" data-t="00:22" data-cap="Survolez chaque partie">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 14 :0014::22"></div>
+        <div class="main">
+          <div class="d4 rv" style="margin-bottom:60px">Anatomie d'un élément.</div>
+          <div class="anat fx" id="anat"><span class="pt" data-k="o">&lt;p</span> <span class="pt"
+              data-k="a">class="important"</span><span class="pt" data-k="o">&gt;</span><span class="pt" data-k="c">Ceci
+              est le contenu.</span><span class="pt" data-k="f">&lt;/p&gt;</span></div>
+          <div class="legend fx" id="legend">
+            <div class="it" data-k="o"><span class="mono">01</span><b>Balise ouvrante</b><span>Chevron <code
+                  class="i">&lt;</code>, nom, chevron <code class="i">&gt;</code>. Le début.</span></div>
+            <div class="it" data-k="a"><span class="mono">02</span><b>Attribut</b><span>Une info en plus. Uniquement
+                dans l'ouvrante.</span></div>
+            <div class="it" data-k="c"><span class="mono">03</span><b>Contenu</b><span>Le texte, ou d'autres éléments,
+                entre les deux.</span></div>
+            <div class="it" data-k="f"><span class="mono">04</span><b>Balise fermante</b><span>La même, avec un <code
+                  class="i">/</code> avant le nom.</span></div>
+            <div class="it" data-k="all"><span class="mono">=</span><b>Élément HTML</b><span>Les trois ensemble. En
+                anglais : <i>element</i>, ou <i>tag</i>.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Attributs" data-t="00:25" data-cap="Les guillemets ne sont pas optionnels">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 15 :0015::25"></div>
+        <div class="main split">
+          <div>
+            <div class="dot foil dx" style="font-size:70px;margin-bottom:44px">nom="valeur"</div>
+            <div class="tbl">
+              <div class="c4 fx"><span class="mono">01</span><span class="t">Uniquement dans la balise ouvrante</span>
+              </div>
+              <div class="c4 fx"><span class="mono">02</span><span class="t">Un espace après le nom de la balise</span>
+              </div>
+              <div class="c4 fx"><span class="mono">03</span><span class="t">Nom, signe <code class="i">=</code>, valeur
+                  entre guillemets</span></div>
+              <div class="c4 fx"><span class="mono">04</span><span class="t">Plusieurs ? Séparés par un espace</span>
+              </div>
+            </div>
+          </div>
+          <div class="fx">
+            <script type="text/x-code" data-lang="html" data-size="sm"><!-- une classe, pour le CSS -->
+            <p class="important">Texte</p>
+
+            <!-- un identifiant unique -->
+            <section id="contact">...</section>
+
+            <!-- un lien et sa destination -->
+            <a href="contact.html" target="_blank">Contact</a>
+
+            <!-- ✕ pas de guillemets -->
+            <p class=important>Texte</p>
+            </script>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Éléments vides" data-t="00:27" data-cap="Pas de contenu · donc rien à fermer">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 16 :0016::27"></div>
+        <div class="main split">
+          <div>
+            <div class="d3 rv" style="margin-bottom:46px">Pas de balise<br><span class="mut">fermante.</span></div>
+            <div class="tbl">
+              <div class="c2 fx"><span class="mono">&lt;img&gt;</span><span class="t">Une image. <code
+                    class="i">src</code> et <code class="i">alt</code> obligatoires.</span></div>
+              <div class="c2 fx"><span class="mono">&lt;meta&gt;</span><span class="t">Une métadonnée, dans le
+                  head.</span></div>
+              <div class="c2 fx"><span class="mono">&lt;input&gt;</span><span class="t">Un champ de formulaire.</span>
+              </div>
+              <div class="c2 fx"><span class="mono">&lt;br&gt; &lt;hr&gt;</span><span class="t">Retour à la ligne,
+                  séparateur.</span></div>
+            </div>
+          </div>
+          <div class="fx">
+            <script type="text/x-code" data-lang="html"><img src="img/logo.png" alt="Logo de l'entreprise">
+
+<meta charset="utf-8">
+
+<input type="text" placeholder="Votre nom">
+
+<!-- ✕ inutile, et faux -->
+<img src="img/logo.png"></img></script>
+            <p class="p" style="margin-top:28px">Le <code class="i">alt</code> décrit l'image à ceux qui ne la voient
+              pas : lecteur d'écran, Google, connexion lente.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Imbrication" data-t="00:29" data-cap="La première ouverte est la dernière fermée">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 17 :0017::29"></div>
+        <div class="main split nest" id="nest" data-mode="good">
+          <div>
+            <div class="d3 rv" style="margin-bottom:40px">Des boîtes<br><span class="mut">dans des boîtes.</span></div>
+            <div class="tg fx" id="nestTg"><button data-m="good" class="on">Emboîté</button><span
+                class="sep">/</span><button data-m="bad">Croisé</button></div>
+            <div id="nestCode" class="fx" style="margin-top:26px"></div>
+            <p class="mono" id="nestV" style="margin-top:20px"></p>
+          </div>
+          <div class="fx" style="padding-top:20px">
+            <div class="nest-vis">
+              <div class="nb p">&lt;p&gt;</div>
+              <div class="nb st">&lt;strong&gt;<span class="x c1"></span><span class="x c2"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Structure" data-t="00:31" data-cap="Cliquez chaque ligne">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 18 :0018::31"></div>
+        <div class="main split r">
+          <div>
+            <div class="d4 rv" style="margin-bottom:30px">La structure d'une page.</div>
+            <div class="struct fx" id="struct">
+              <div class="ln" data-k="0">&lt;!DOCTYPE html&gt;</div>
+              <div class="ln" data-k="1">&lt;html lang="fr"&gt;</div>
+              <div class="ln" data-k="2"> &lt;head&gt;</div>
+              <div class="ln" data-k="3"> &lt;meta charset="UTF-8"&gt;</div>
+              <div class="ln" data-k="4"> &lt;meta name="viewport"</div>
+              <div class="ln" data-k="4"> content="width=device-width, initial-scale=1.0"&gt;</div>
+              <div class="ln" data-k="5"> &lt;title&gt;Mon One Page&lt;/title&gt;</div>
+              <div class="ln" data-k="9"> &lt;meta name="description" content="..."&gt;</div>
+              <div class="ln" data-k="10"> &lt;link rel="icon" href="favicon.ico"&gt;</div>
+              <div class="ln" data-k="6"> &lt;link rel="stylesheet" href="css/style.css"&gt;</div>
+              <div class="ln" data-k="2"> &lt;/head&gt;</div>
+              <div class="ln" data-k="7"> &lt;body&gt;</div>
+              <div class="ln" data-k="8"> &lt;h1&gt;Bonjour MMI&lt;/h1&gt;</div>
+              <div class="ln" data-k="7"> &lt;/body&gt;</div>
+              <div class="ln" data-k="1">&lt;/html&gt;</div>
+            </div>
+          </div>
+          <div class="expl fx" id="expl" style="padding-top:74px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="En direct" data-t="00:34" data-cap="Modifiez · cassez · regardez">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 19 :0019::34"></div>
+        <div class="main">
+          <div class="d4 rv" style="margin-bottom:30px">Essayez de casser.</div>
+          <div class="live fx" style="height:580px">
+            <script type="text/x-code" data-lang="html"><h1>Bienvenue chez MMI</h1>
+<p class="important">
+  Je suis un <strong>paragraphe</strong>
+  avec un <em>attribut</em>.
+</p>
+<img src="img/absente.jpg" alt="Une image qui n'existe pas">
+<ul>
+  <li>Un</li>
+  <li>Deux</li>
+</ul></script>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Div & span" data-t="00:36"
+      data-cap="Les boîtes neutres · quand rien d'autre ne convient">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 20 :0020::36"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:46px">Les boîtes sans nom.</div>
+          <div class="split" style="gap:48px">
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">&lt;div&gt; · bloc</span>
+              <div style="margin:22px 0;display:flex;flex-direction:column;gap:8px">
+                <div class="demo-b">div · prend toute la largeur</div>
+                <div class="demo-b">div · et passe à la ligne</div>
+              </div>
+              <p class="p">Un conteneur neutre de niveau bloc. Pour regrouper, souvent pour la mise en page.</p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">&lt;span&gt; · en ligne</span>
+              <p style="margin:22px 0;font-size:26px;letter-spacing:-.02em;line-height:1.5">Un texte avec <span
+                  class="demo-i">un span</span> au milieu, qui <span class="demo-i">reste</span> dans la ligne.</p>
+              <p class="p">Un conteneur neutre en ligne. Pour cibler un morceau de texte en CSS.</p>
+            </div>
+          </div>
+          <p class="mono fx" style="margin-top:34px">Règle · une balise sémantique d'abord. Div et span seulement si
+            aucune ne convient.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Titres & textes" data-t="00:38"
+      data-cap="Un seul h1 par page · on ne saute pas de niveau">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 21 :0021::38"></div>
+        <div class="main split">
+          <div class="hier">
+            <div class="fx"><span class="mono">h1</span><span
+                style="font-size:92px;letter-spacing:-.055em;line-height:1">Le titre</span></div>
+            <div class="fx"><span class="mono">h2</span><span
+                style="font-size:62px;letter-spacing:-.045em;line-height:1.05">Une section</span></div>
+            <div class="fx"><span class="mono">h3</span><span style="font-size:42px;letter-spacing:-.035em">Une
+                sous-partie</span></div>
+            <div class="fx"><span class="mono">h4–6</span><span style="font-size:26px;color:var(--g4)">Rarement
+                utilisés</span></div>
+            <div class="fx"><span class="mono">p</span><span class="p" style="font-size:20px;padding:8px 0">Le
+                paragraphe, avec un mot <b style="font-weight:600;color:var(--black)">important</b> et un mot
+                <i>accentué</i>.</span></div>
+          </div>
+          <div class="fx">
+            <script type="text/x-code" data-lang="html"><p>Un mot <strong>important</strong>,
+   un mot <em>accentué</em>.</p>
+
+<ul>  <!-- liste à puces -->
+  <li>HTML</li>
+  <li>CSS</li>
+</ul>
+
+<ol>  <!-- liste numérotée -->
+  <li>Ouvrir VS Code</li>
+  <li>Coder</li>
+</ol></script>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Liens & images" data-t="00:40"
+      data-cap="Un chemin relatif part du fichier où l'on écrit">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 22 :0022::40"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:46px">Relier, montrer.</div>
+          <div class="split" style="gap:40px">
+            <div class="fx">
+              <script type="text/x-code" data-lang="html"><!-- vers une autre page -->
+              <a href="contact.html">Contact</a>
+
+              <!-- vers un autre site, nouvel onglet -->
+              <a href="https://mmi.fr" target="_blank">MMI</a>
+
+              <!-- vers une section de la page -->
+              <a href="#projets">Projets</a>
+              <section id="projets">...</section>
+              </script>
+              <p class="mono" style="margin-top:20px">Les ancres #id · tout le principe du One Page</p>
+            </div>
+            <div class="fx">
+              <script type="text/x-code" data-lang="html"><!-- depuis index.html -->
+              <img src="img/portrait.jpg" alt="Mon portrait" width="400" height="500">
+
+              <!-- depuis css/style.css -->
+              background-image:
+              url("../img/fond.jpg");
+              </script>
+              <p class="mono" style="margin-top:20px">../ = remonter d'un dossier</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Formats d'image" data-t="00:42" data-cap="Le bon format = un site plus léger">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 23 :0023::42"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:48px">Le bon format<br><span class="mut">pour la bonne image.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:28px">
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div>
+              <div class="dot foil" style="font-size:64px">JPG</div>
+              <p class="p" style="font-size:18px;margin-top:18px">Photos, dégradés complexes. Compression avec perte.
+              </p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div>
+              <div class="dot foil" style="font-size:64px">PNG</div>
+              <p class="p" style="font-size:18px;margin-top:18px">Aplats, captures, transparence. Sans perte, plus
+                lourd.</p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div>
+              <div class="dot foil" style="font-size:64px">SVG</div>
+              <p class="p" style="font-size:18px;margin-top:18px">Logos, icônes. Vectoriel : net à toutes les tailles.
+              </p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div>
+              <div class="dot foil" style="font-size:64px">GIF</div>
+              <p class="p" style="font-size:18px;margin-top:18px">Petites animations. 256 couleurs maximum.</p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div>
+              <div class="dot foil" style="font-size:64px">WEBP</div>
+              <p class="p" style="font-size:18px;margin-top:18px">Le format moderne : photo ou transparence, bien plus
+                léger.</p>
+            </div>
+          </div>
+          <p class="mono fx" style="margin-top:40px">Toujours width et height sur un img · la page ne saute pas au
+            chargement</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Sémantique" data-t="00:44" data-cap="Même rendu · pas du tout le même sens">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 24 :0024::44"></div>
+        <div class="main split l semw" id="semw" data-mode="div">
+          <div>
+            <div class="d3 rv" style="margin-bottom:40px">De la soupe<br><span class="mut">au sens.</span></div>
+            <div class="tg fx" id="semTg"><button data-m="div" class="on">Avant · div</button><span
+                class="sep">/</span><button data-m="sem">Après · sémantique</button></div>
+            <p class="p fx" id="semWhy" style="margin-top:28px;min-height:130px"></p>
+          </div>
+          <div class="wf fx">
+            <div class="b row"><span><span class="div">&lt;div class="header"&gt;</span><span
+                  class="sem">&lt;header&gt;</span></span><span class="in2"><span class="div">&lt;div
+                  class="menu"&gt;</span><span class="sem">&lt;nav&gt;</span></span></div>
+            <div class="b main2"><span><span class="div">&lt;div class="contenu"&gt;</span><span
+                  class="sem">&lt;main&gt;</span></span>
+              <div style="display:flex;gap:10px;flex:1">
+                <div class="sec"><span class="div">&lt;div class="bloc"&gt;</span><span
+                    class="sem">&lt;section&gt;</span></div>
+                <div class="sec"><span class="div">&lt;div class="bloc"&gt;</span><span
+                    class="sem">&lt;section&gt;</span></div>
+                <div class="sec"><span class="div">&lt;div class="carte"&gt;</span><span
+                    class="sem">&lt;article&gt;</span></div>
+                <div class="sec"><span class="div">&lt;div class="pub"&gt;</span><span class="sem">&lt;aside&gt;</span>
+                </div>
+              </div>
+            </div>
+            <div class="b"><span class="div">&lt;div class="footer"&gt;</span><span class="sem">&lt;footer&gt;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Formulaires" data-t="00:47" data-cap="Le for du label = l'id du champ">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 25 :0025::47"></div>
+        <div class="main split">
+          <div class="fx">
+            <script type="text/x-code" data-lang="html" data-size="sm"><form>
+  <label for="nom">Nom</label>
+  <input type="text" id="nom" required>
+
+  <label for="email">E-mail</label>
+  <input type="email" id="email" required>
+
+  <label for="msg">Message</label>
+  <textarea id="msg"></textarea>
+
+  <button type="submit">Envoyer</button>
+</form></script>
+            <div class="tbl" style="margin-top:26px">
+              <div class="c2" style="grid-template-columns:130px 1fr"><span class="mono">type</span><span
+                  style="font-size:18px">change le clavier mobile : email, tel…</span></div>
+              <div class="c2" style="grid-template-columns:130px 1fr"><span class="mono">required</span><span
+                  style="font-size:18px">bloque l'envoi si c'est vide</span></div>
+              <div class="c2" style="grid-template-columns:130px 1fr"><span class="mono">textarea</span><span
+                  style="font-size:18px">n'est pas un élément vide</span></div>
+            </div>
+          </div>
+          <form class="formdemo fx" id="formdemo" novalidate>
+            <span class="mono mut">Rendu · cliquez sur un label</span>
+            <label for="fd-nom">Nom</label><input id="fd-nom" type="text" required>
+            <label for="fd-mail">E-mail</label><input id="fd-mail" type="email" required>
+            <label for="fd-msg">Message</label><textarea id="fd-msg" rows="3"></textarea>
+            <button class="btn" type="submit">Envoyer</button>
+            <p class="msg" id="fdMsg"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Les champs" data-t="00:49"
+      data-cap="name identique = un seul choix parmi les radios">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 26 :0026::49"></div>
+        <div class="main split">
+          <div class="fx">
+            <script type="text/x-code" data-lang="html" data-size="sm"><form action="/contact" method="post">
+  <input type="password" id="mdp">
+  <input type="checkbox" id="news" checked>
+
+  <input type="radio" name="niv" value="1a">
+  <input type="radio" name="niv" value="2a">
+
+  <select id="annee">
+    <option value="1a">1re année</option>
+  </select>
+
+  <input type="file" id="cv">
+  <button type="submit">Envoyer</button>
+</form></script>
+          </div>
+          <div>
+            <div class="d4 rv" style="margin-bottom:28px">Les champs, et leurs réglages.</div>
+            <div class="tbl">
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">placeholder</span><span
+                  style="font-size:19px">un exemple grisé, jamais à la place du label</span></div>
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">required</span><span
+                  style="font-size:19px">obligatoire</span></div>
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">disabled</span><span
+                  style="font-size:19px">grisé, non modifiable, non envoyé</span></div>
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">value</span><span
+                  style="font-size:19px">la valeur envoyée</span></div>
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">checked</span><span
+                  style="font-size:19px">coché par défaut</span></div>
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">method</span><span
+                  style="font-size:19px">get = dans l'URL · post = caché</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Polices & W3C" data-t="00:51"
+      data-cap="Deux polices maximum · un validateur toujours">
+      <div class="lay">
+        <div class="code mono s scr" data-c="02 · 27 :0027::51"></div>
+        <div class="main split">
+          <div>
+            <div class="d4 rv" style="margin-bottom:24px">Les polices.</div>
+            <div class="fx">
+              <script type="text/x-code" data-lang="html" data-size="sm"><!-- Google Fonts, dans le head -->
+              <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+              </script>
+            </div>
+            <div class="fx" style="margin-top:14px">
+              <script type="text/x-code" data-lang="css" data-size="sm">/* ou police hébergée */
+@font-face {
+  font-family: "Ma Police";
+  src: url("../fonts/ma-police.woff2");
+}</script>
+            </div>
+            <p class="mono fx" style="margin-top:20px">Règle UX · 2 polices maximum : titres + texte</p>
+          </div>
+          <div>
+            <div class="dot foil dx" style="font-size:150px">W3C</div>
+            <div class="tbl" style="margin-top:34px">
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">Le rôle</span><span
+                  class="t">Écrire les standards du web.</span></div>
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">L'outil</span><span
+                  class="t">validator.w3.org · collez votre code.</span></div>
+              <div class="c2 fx" style="grid-template-columns:150px 1fr"><span class="mono">Le réflexe</span><span
+                  class="t">Avant chaque rendu. Zéro erreur.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="CSS" data-t="00:54" data-cap="Le même HTML · mille apparences">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 28 :0028::54"></div>
+        <div class="main">
+          <div class="dot foil dx" style="font-size:440px;margin-top:-20px">03</div>
+          <div class="bottom">
+            <div class="hr" style="margin-bottom:26px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end">
+              <div class="d1 rv">CSS.</div>
+              <div class="mono fx" style="text-align:right;line-height:1.7">18 notions<br>43 minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Une règle" data-t="00:55"
+      data-cap="Un point-virgule oublié casse la ligne suivante">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 29 :0029::55"></div>
+        <div class="main split">
+          <div>
+            <span class="mono">Dans le head de index.html</span>
+            <div class="fx" style="margin:14px 0 50px">
+              <script type="text/x-code" data-lang="html"
+                data-size="sm"><link rel="stylesheet" href="css/style.css"></script>
+            </div>
+            <div class="dx"
+              style="font-family:'Space Mono',monospace;font-size:50px;line-height:1.45;letter-spacing:-.03em">
+              <b>h1</b> {<br>
+              &nbsp;&nbsp;<span style="color:var(--g5)">color</span>: #1a1b1d;<br>
+              }
+            </div>
+          </div>
+          <div style="padding-top:6px">
+            <div class="tbl">
+              <div class="c2 fx"><span class="mono">Sélecteur</span><span class="t">Qui je cible · <code
+                    class="i">h1</code></span></div>
+              <div class="c2 fx"><span class="mono">Propriété</span><span class="t">Ce que je change · <code
+                    class="i">color</code></span></div>
+              <div class="c2 fx"><span class="mono">Valeur</span><span class="t">Comment · <code
+                    class="i">#1a1b1d</code></span></div>
+              <div class="c2 fx"><span class="mono">Déclaration</span><span class="t">Propriété + valeur + <code
+                    class="i">;</code></span></div>
+            </div>
+            <p class="p fx" style="margin-top:30px">Cascade : à égalité, c'est la dernière règle écrite qui gagne. Le C
+              de CSS.</p>
+            <p class="mono fx" style="margin-top:22px">Toujours une feuille externe · ni style="" ni &lt;style&gt; dans
+              la page</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="En direct" data-t="00:57" data-cap="Changez les valeurs · essayez tomato">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 30 :0030::57"></div>
+        <div class="main">
+          <div class="d4 rv" style="margin-bottom:30px">Le même HTML, une autre peau.</div>
+          <div class="live fx" style="height:580px">
+            <script type="text/x-code" data-lang="html"><header class="hero">
+  <h1>Studio Nova</h1>
+  <p class="accroche">Design & web</p>
+</header></script>
+            <script type="text/x-code" data-lang="css">body { margin: 0; font-family: sans-serif; }
+
+.hero {
+  background: #1a1b1d;
+  color: #ffffff;
+  padding: 40px;
+}
+
+h1 {
+  color: crimson;
+  font-size: 64px;
+  margin: 0;
+}
+
+.accroche { font-style: italic; }</script>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Sélecteurs" data-t="00:59" data-cap="Tapez un sélecteur · la cible s'allume">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 31 :0031::59"></div>
+        <div class="main split l selp">
+          <div>
+            <span class="mono">Sélecteur</span>
+            <input id="selIn" value="h2" spellcheck="false" autocomplete="off" aria-label="Sélecteur CSS">
+            <p class="mono" id="selInfo" style="margin-top:12px"></p>
+            <div class="chips" id="selChips"><button>p</button><button>.card</button><button>#hero</button><button>nav
+                a</button><button>.card p</button><button>a.actif</button><button>h1, h2</button><button>main &gt;
+                section</button></div>
+            <div class="tbl">
+              <div class="c2" style="grid-template-columns:110px 1fr"><span class="mono">p</span><span
+                  style="font-size:19px">la balise</span></div>
+              <div class="c2" style="grid-template-columns:110px 1fr"><span class="mono">.card</span><span
+                  style="font-size:19px">la classe, réutilisable</span></div>
+              <div class="c2" style="grid-template-columns:110px 1fr"><span class="mono">#hero</span><span
+                  style="font-size:19px">l'id, unique dans la page</span></div>
+              <div class="c2" style="grid-template-columns:110px 1fr"><span class="mono">nav a</span><span
+                  style="font-size:19px">les a dans un nav</span></div>
+            </div>
+          </div>
+          <div class="tree fx" id="selTree">
+            <header id="hero" data-l="header#hero">
+              <h1 data-l="h1">Studio Nova</h1>
+              <nav data-l="nav"><a data-l="a">Projets</a><a class="actif" data-l="a.actif">Contact</a></nav>
+            </header>
+            <main data-l="main">
+              <section class="card" data-l="section.card">
+                <h2 data-l="h2">Projet 01</h2>
+                <p data-l="p">Description</p>
+              </section>
+              <section class="card" data-l="section.card">
+                <h2 data-l="h2">Projet 02</h2>
+                <p class="note" data-l="p.note">Note</p>
+              </section>
+            </main>
+            <footer data-l="footer">
+              <p data-l="p">© 2026</p>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Spécificité" data-t="01:02" data-cap="F12 · les règles barrées ont perdu">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 32 :0032::02"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:44px">Qui gagne ?</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:28px">
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">style="" en ligne</span>
+              <div class="dot foil" style="font-size:66px;margin-top:20px">1000</div>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">#id</span>
+              <div class="dot foil" style="font-size:66px;margin-top:20px">0100</div>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">.classe · :hover</span>
+              <div class="dot foil" style="font-size:66px;margin-top:20px">0010</div>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">balise · ::before</span>
+              <div class="dot foil" style="font-size:66px;margin-top:20px">0001</div>
+            </div>
+          </div>
+          <div class="split" style="margin-top:44px;gap:48px">
+            <div class="fx">
+              <script type="text/x-code" data-lang="css" data-size="sm">p        { color: black; }  /* 0001 */
+.intro   { color: gray;  }  /* 0010 */
+#hero p  { color: red;   }  /* 0101 ← gagne */</script>
+            </div>
+            <p class="p fx">À poids égal, la dernière règle écrite gagne. Dans l'inspecteur (F12), les déclarations
+              barrées sont celles qui ont perdu.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Valeurs" data-t="01:04" data-cap="px bordures · rem texte · % largeurs">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 33 :0033::04"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:54px">Couleurs, unités, typo.</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px">
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">01 · Couleurs</span>
+              <div style="margin-top:22px">
+                <script type="text/x-code" data-lang="css" data-size="sm">color: tomato;
+color: #1a1b1d;
+color: rgb(0 0 0 / 50%);
+color: hsl(220 5% 11%);
+color: oklch(22% .01 260);</script>
+              </div>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">02 · Unités</span>
+              <div style="margin-top:22px">
+                <script type="text/x-code" data-lang="css" data-size="sm">border: 1px solid;
+font-size: 1.5rem;
+padding: 1em;
+width: 50%;
+height: 100dvh;</script>
+              </div>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">03 · Typo</span>
+              <div style="margin-top:22px">
+                <script type="text/x-code" data-lang="css" data-size="sm">font-family: "Inter", sans-serif;
+font-weight: 500;
+line-height: 1.5;
+letter-spacing: -0.02em;</script>
+              </div>
+            </div>
+          </div>
+          <p class="mono fx" style="margin-top:40px">rem = taille de base · 16px · à privilégier pour l'accessibilité ·
+            em = taille du parent</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Fonds & ombres" data-t="01:06"
+      data-cap="border-radius et box-shadow · le b.a.-ba de l'UI">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 34 :0034::06"></div>
+        <div class="main split">
+          <div class="fx">
+            <script type="text/x-code" data-lang="css">.carte {
+  background-color: #f5f5f6;
+  background-image: url("../img/fond.jpg");
+  background-size: cover;
+
+  border: 1px solid #d6d7d9;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}</script>
+          </div>
+          <div class="fx"
+            style="display:flex;align-items:center;justify-content:center;background:var(--g1);height:470px">
+            <div
+              style="width:340px;padding:30px;background:#fff;border:1px solid var(--g3);border-radius:16px;box-shadow:0 8px 24px rgb(0 0 0 / 12%)">
+              <span class="mono">Carte</span>
+              <div class="d4" style="margin:40px 0 10px">Projet 01</div>
+              <p class="p" style="font-size:17px">border-radius 16px, une ombre douce, une bordure fine.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Box model" data-t="01:08" data-cap="Tout est une boîte · toujours">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 35 :0035::08"></div>
+        <div class="main bm">
+          <div>
+            <div class="d3 rv" style="margin-bottom:40px">Tout est<br><span class="mut">une boîte.</span></div>
+            <div class="ctrl fx">
+              <label>width<input type="range" min="120" max="420" value="300" data-p="w"><output>300</output></label>
+              <label>padding<input type="range" min="0" max="60" value="24" data-p="p"><output>24</output></label>
+              <label>border<input type="range" min="0" max="20" value="4" data-p="b"><output>4</output></label>
+              <label>margin<input type="range" min="0" max="60" value="30" data-p="m"><output>30</output></label>
+            </div>
+            <div class="tg fx" id="bmTg" style="margin-top:18px;text-transform:none"><button data-bs="content-box"
+                class="on">content-box</button><span class="sep">/</span><button
+                data-bs="border-box">border-box</button></div>
+            <div class="bm-tot fx" id="bmTot"></div>
+          </div>
+          <div class="fx">
+            <div class="bmv">
+              <div class="bm-m" id="bmM">
+                <div class="bm-b" id="bmB">
+                  <div class="bm-p" id="bmP">
+                    <div class="bm-c" id="bmC"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="bm-legend mono s"><span><i
+                    style="background:repeating-linear-gradient(-45deg,transparent 0 2px,var(--g4) 2px 3px)"></i>margin</span><span><i
+                    style="background:var(--black)"></i>border</span><span><i
+                    style="background:var(--g2)"></i>padding</span><span><i style="background:#fff"></i>contenu</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Reset" data-t="01:11" data-cap="En haut de chaque style.css">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 36 :0036::11"></div>
+        <div class="main split">
+          <div>
+            <div class="d2 rv" style="margin-bottom:40px">On repart<br><span class="mut">de zéro.</span></div>
+            <p class="p fx">Chaque navigateur ajoute ses propres marges. Le reset les efface, et <code
+                class="i">border-box</code> rend les largeurs prévisibles.</p>
+          </div>
+          <div class="fx">
+            <script type="text/x-code" data-lang="css">/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}</script>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Display" data-t="01:13" data-cap="block · inline · inline-block">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 37 :0037::13"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:40px">Trois façons<br><span class="mut">de prendre la place.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px">
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">display: block</span>
+              <div style="margin:22px 0;display:flex;flex-direction:column;gap:8px">
+                <div class="demo-b">div, p, h1, section</div>
+                <div class="demo-b">toute la largeur</div>
+              </div>
+              <p class="p" style="font-size:18px">Passe à la ligne. Accepte width et height.</p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">display: inline</span>
+              <p style="margin:22px 0;font-size:22px;line-height:1.6;letter-spacing:-.02em">Du texte <span
+                  class="demo-i">a</span> <span class="demo-i">span</span> <span class="demo-i">strong</span> dans la
+                ligne.</p>
+              <p class="p" style="font-size:18px">Reste dans la ligne. Ignore width et height.</p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">display: inline-block</span>
+              <div style="margin:22px 0"><span class="demo-ib">120 × 60</span> <span class="demo-ib">120 × 60</span>
+              </div>
+              <p class="p" style="font-size:18px">Dans la ligne, mais accepte width et height. Les boutons.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Pseudo-classes" data-t="01:15" data-cap="Survolez · tabulez · regardez">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 38 :0038::15"></div>
+        <div class="main split">
+          <div class="fx">
+            <script type="text/x-code" data-lang="css" data-size="sm">/* états */
+.btn:hover  { background: #3d3e43; }
+.btn:focus  { outline: 2px solid; }
+
+/* structure */
+li:nth-child(odd) { background: #f5f5f6; }
+li:first-child    { font-weight: 700; }
+
+/* contenu ajouté en CSS */
+li::before { content: "→ "; }</script>
+            <p class="mono" style="margin-top:20px">Un deux-points = un état · deux = un élément virtuel</p>
+          </div>
+          <div class="fx pseudo-demo">
+            <span class="mono">Rendu · en direct</span>
+            <div style="margin:22px 0 34px"><button class="pd-btn">Survolez-moi</button></div>
+            <ul class="pd-list">
+              <li>Accueil</li>
+              <li>Projets</li>
+              <li>À propos</li>
+              <li>Contact</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Variables" data-t="01:18" data-cap="Changez une valeur · tout le site suit">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 39 :0039::18"></div>
+        <div class="main split">
+          <div class="fx">
+            <script type="text/x-code" data-lang="css">:root {
+  --fond: #ffffff;
+  --texte: #1a1b1d;
+  --radius: 12px;
+}
+
+.carte {
+  background: var(--fond);
+  color: var(--texte);
+  border-radius: var(--radius);
+}</script>
+            <p class="p" style="margin-top:22px;font-size:19px">L'intérêt UX/UI : un thème clair ou sombre, un design
+              system cohérent, une couleur changée à un seul endroit.</p>
+          </div>
+          <div class="fx">
+            <div class="tg" id="varTg"><button class="on" data-th="light">Thème clair</button><span
+                class="sep">/</span><button data-th="dark">Thème sombre</button></div>
+            <div id="varDemo" class="var-demo" style="margin-top:22px"><span class="mono">--fond · --texte</span>
+              <div class="d4" style="margin:60px 0 12px">Une seule source.</div>
+              <p style="font-size:18px">Deux variables changent, toute la carte suit.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Position" data-t="01:20"
+      data-cap="relative = le repère · absolute = se cale dessus">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 40 :0040::20"></div>
+        <div class="main split l">
+          <div>
+            <div class="d4 rv" style="margin-bottom:24px">Sortir du flux.</div>
+            <div class="tg fx" id="posTg" style="flex-wrap:wrap;text-transform:none"><button
+                class="on">static</button><button>relative</button><button>absolute</button><button>fixed</button></div>
+            <div id="posCode" class="fx" style="margin-top:22px"></div>
+            <div class="tbl fx" style="margin-top:22px">
+              <div class="c2" style="grid-template-columns:120px 1fr"><span class="mono">sticky</span><span
+                  style="font-size:18px">normal, puis colle au bord au scroll</span></div>
+              <div class="c2" style="grid-template-columns:120px 1fr"><span class="mono">z-index</span><span
+                  style="font-size:18px">l'ordre des calques, le plus grand devant</span></div>
+            </div>
+          </div>
+          <div class="fx">
+            <div class="pos-parent" id="posParent"><span class="mono s pos-l">.parent · position: relative</span>
+              <div class="pos-sib">Frère 1</div>
+              <div class="pos-box" id="posBox">.box</div>
+              <div class="pos-sib">Frère 2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Flexbox" data-t="01:23"
+      data-cap="display: flex sur le parent · les enfants se rangent">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 41 :0041::23"></div>
+        <div class="main fxw">
+          <div>
+            <div class="fx">
+              <div class="opt"><span class="mono">flex-direction</span>
+                <div class="tg" data-fx="flexDirection"><button class="on">row</button><button>column</button></div>
+              </div>
+              <div class="opt"><span class="mono">justify-content · axe principal</span>
+                <div class="tg" data-fx="justifyContent"><button
+                    class="on">flex-start</button><button>center</button><button>space-between</button><button>space-evenly</button>
+                </div>
+              </div>
+              <div class="opt"><span class="mono">align-items · axe secondaire</span>
+                <div class="tg" data-fx="alignItems"><button>stretch</button><button
+                    class="on">flex-start</button><button>center</button><button>flex-end</button></div>
+              </div>
+              <div class="opt"><span class="mono">gap</span>
+                <div class="tg" data-fx="gap"><button class="on">0px</button><button>16px</button><button>40px</button>
+                </div>
+              </div>
+              <div class="opt"><span class="mono">flex-wrap · passer à la ligne</span>
+                <div class="tg" data-fx="flexWrap"><button class="on">nowrap</button><button>wrap</button></div>
+              </div>
+            </div>
+            <div id="fxCode" class="fx" style="margin-top:22px"></div>
+          </div>
+          <div class="fx">
+            <div class="fxbox" id="fxBox">
+              <div>1</div>
+              <div>2</div>
+              <div>3</div>
+              <div>4</div>
+              <div>5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Grid" data-t="01:27" data-cap="Flex = une dimension · Grid = deux">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 42 :0042::27"></div>
+        <div class="main split">
+          <div>
+            <div class="d4 rv" style="margin-bottom:24px">CSS Grid.</div>
+            <div class="fx">
+              <script type="text/x-code" data-lang="css" data-size="sm">.page {
+  display: grid;
+  grid-template-columns: 240px 1fr 1fr;
+  grid-template-areas:
+    "head head head"
+    "nav  main main"
+    "foot foot foot";
+  gap: 12px;
+}
+header { grid-area: head; }
+nav    { grid-area: nav; }</script>
+            </div>
+            <p class="mono fx" style="margin-top:18px">repeat(3, 1fr) · 3 colonnes égales · fr = une part</p>
+          </div>
+          <div class="fx grid-demo">
+            <div style="grid-area:h">head</div>
+            <div style="grid-area:n">nav</div>
+            <div style="grid-area:m">main</div>
+            <div style="grid-area:f">foot</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Responsive" data-t="01:30"
+      data-cap="Mobile d'abord · au-delà de 768px la règle bureau s'ajoute">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 43 :0043::30"></div>
+        <div class="main split" style="grid-template-columns:340px 1fr;gap:48px">
+          <div>
+            <div class="d4 rv" style="margin-bottom:30px">Tenir sur un téléphone.</div>
+            <div class="fx">
+              <script type="text/x-code" data-lang="css" data-size="sm">/* mobile d'abord */
+.cartes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* puis écrans ≥ 768px */
+@media (min-width: 768px) {
+  .cartes {
+    flex-direction: row;
+  }
+}</script>
+            </div>
+            <p class="mono fx" style="margin-top:18px">Points de rupture · 576 · 768 · 992 · 1200</p>
+            <p class="p fx" style="margin-top:12px;font-size:18px">Sans la meta viewport dans le head, le mobile ignore
+              tout ça.</p>
+          </div>
+          <div class="fx">
+            <div class="rsp-ctrl mono"><span>320</span><input type="range" min="320" max="800" value="800" id="rspIn"
+                aria-label="Largeur d'écran"><span>800</span><span class="st" id="rspSt"></span></div>
+            <div class="rsp-wrap"><iframe id="rspF" title="Démo responsive"></iframe></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= 04 · BILAN -->
+
+    <section class="slide" data-sec="Organiser" data-t="01:33" data-cap="Un nom de classe doit se comprendre seul">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 44 :0044::33"></div>
+        <div class="main split">
+          <div>
+            <div class="d3 rv" style="margin-bottom:34px">Ranger<br><span class="mut">son CSS.</span></div>
+            <div class="tbl">
+              <div class="c2 fx" style="grid-template-columns:190px 1fr"><span class="mono">base.css</span><span
+                  class="t">reset, variables, typo</span></div>
+              <div class="c2 fx" style="grid-template-columns:190px 1fr"><span class="mono">layout.css</span><span
+                  class="t">header, grilles, sections</span></div>
+              <div class="c2 fx" style="grid-template-columns:190px 1fr"><span class="mono">components.css</span><span
+                  class="t">boutons, cartes, formulaires</span></div>
+            </div>
+          </div>
+          <div>
+            <span class="mono fx">BEM · Block, Element, Modifier</span>
+            <div class="fx" style="margin-top:18px">
+              <script type="text/x-code" data-lang="css">.card { }            /* Block    */
+.card__title { }     /* Element  */
+.card--featured { }  /* Modifier */
+
+.btn { }
+.btn--fill { }</script>
+            </div>
+            <p class="p fx" style="margin-top:20px;font-size:19px">Deux tirets bas pour un morceau du bloc, deux tirets
+              pour une variante.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Bonus · SCSS" data-t="01:35"
+      data-cap="Pour aller plus loin · ça se compile en CSS">
+      <div class="lay">
+        <div class="code mono s scr" data-c="03 · 45 :0045::35"></div>
+        <div class="main split">
+          <div>
+            <span class="mono">Bonus</span>
+            <div class="d2 rv" style="margin:20px 0 30px">SCSS.</div>
+            <p class="p fx">Un préprocesseur : on écrit du SCSS, il est compilé en CSS classique que le navigateur
+              comprend.</p>
+            <div class="tbl" style="margin-top:30px">
+              <div class="c2 fx" style="grid-template-columns:170px 1fr"><span class="mono">Imbrication</span><span
+                  style="font-size:19px">des règles dans des règles</span></div>
+              <div class="c2 fx" style="grid-template-columns:170px 1fr"><span class="mono">$variables</span><span
+                  style="font-size:19px">avant les variables CSS natives</span></div>
+              <div class="c2 fx" style="grid-template-columns:170px 1fr"><span class="mono">@mixin</span><span
+                  style="font-size:19px">des blocs réutilisables</span></div>
+              <div class="c2 fx" style="grid-template-columns:170px 1fr"><span class="mono">_partials</span><span
+                  style="font-size:19px">découper, puis @use</span></div>
+            </div>
+          </div>
+          <div class="fx">
+            <script type="text/x-code" data-lang="css">$noir: #1a1b1d;
+
+@mixin centre {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav {
+  background: $noir;
+  @include centre;
+
+  a {
+    color: white;
+    &:hover { opacity: .6; }
+  }
+}</script>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Bilan" data-t="01:37" data-cap="Prenez une photo de ce slide">
+      <div class="lay">
+        <div class="code mono s scr" data-c="04 · 46 :0046::37"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:56px">Ce qu'il faut retenir.</div>
+          <div class="split" style="gap:48px">
+            <div>
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">HTML · le sens</span>
+              <div class="tbl" style="margin-top:22px">
+                <div class="c4 fx"><span class="mono">01</span><span class="t">Ouvrante, contenu, fermante</span></div>
+                <div class="c4 fx"><span class="mono">02</span><span class="t">Attributs dans l'ouvrante, entre
+                    guillemets</span></div>
+                <div class="c4 fx"><span class="mono">03</span><span class="t">img, input, meta : pas de fermante</span>
+                </div>
+                <div class="c4 fx"><span class="mono">04</span><span class="t">On ne croise jamais les balises</span>
+                </div>
+                <div class="c4 fx"><span class="mono">05</span><span class="t">header, nav, main, section, footer</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="hr" style="margin-bottom:16px"></div><span class="mono">CSS · l'allure</span>
+              <div class="tbl" style="margin-top:22px">
+                <div class="c4 fx"><span class="mono">06</span><span class="t">sélecteur { propriété: valeur; }</span>
+                </div>
+                <div class="c4 fx"><span class="mono">07</span><span class="t">balise, .classe, #id</span></div>
+                <div class="c4 fx"><span class="mono">08</span><span class="t">contenu + padding + border +
+                    margin</span></div>
+                <div class="c4 fx"><span class="mono">09</span><span class="t">display: flex sur le parent</span></div>
+                <div class="c4 fx"><span class="mono">10</span><span class="t">mobile d'abord, puis @media (min-width:
+                    768px)</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Ressources" data-t="01:39" data-cap="Chez vous · Froggy jusqu'au niveau 24">
+      <div class="lay">
+        <div class="code mono s scr" data-c="04 · 47 :0047::39"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:50px">Pour s'entraîner.</div>
+          <div class="tbl">
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">Jeu</span><span class="t">Flexbox Froggy <span
+                  class="mut">· flexboxfroggy.com</span></span><span class="mono">Flexbox</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">Jeu</span><span class="t">Grid Garden <span
+                  class="mut">· cssgridgarden.com</span></span><span class="mono">la suite</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">Référence</span><span class="t">MDN Web Docs
+                <span class="mut">· developer.mozilla.org/fr</span></span><span class="mono">la bible</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">Outil</span><span class="t">Validateur W3C
+                <span class="mut">· validator.w3.org</span></span><span class="mono">avant le rendu</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">Outil</span><span class="t">Inspecteur <span
+                  class="mut">· F12 ou clic droit › Inspecter</span></span><span class="mono">tous les jours</span>
+            </div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">Vidéos</span><span class="t">La playlist du
+                cours <span class="mut">· HTML puis CSS, notion par notion</span></span><span class="mono">à
+                revoir</span></div>
+            <div class="c3 fx" style="padding:14px 0"><span class="mono">Exos</span><span class="t">Le site d'exercices
+                <span class="mut">· reste en ligne</span></span><span class="mono">01 → 12</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-sec="Votre atelier" data-t="01:41" data-cap="À faire avant les exercices · 5 minutes">
+      <div class="lay">
+        <div class="code mono s scr" data-c="04 · 48 :0048::41"></div>
+        <div class="main">
+          <div class="d3 rv" style="margin-bottom:56px">Avant de coder,<br><span class="mut">on installe
+              l'atelier.</span></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px">
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div><span class="mono">01 · L'éditeur</span>
+              <div class="d4" style="margin:28px 0 14px">VS Code</div>
+              <p class="p" style="font-size:19px">Gratuit, sur code.visualstudio.com.</p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div><span class="mono">02 · Extension</span>
+              <div class="d4" style="margin:28px 0 14px">Live Server</div>
+              <p class="p" style="font-size:19px">Ouvre la page dans le navigateur et la recharge à chaque sauvegarde.
+              </p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div><span class="mono">03 · Extension</span>
+              <div class="d4" style="margin:28px 0 14px">Prettier</div>
+              <p class="p" style="font-size:19px">Range le code tout seul. Activez <code
+                  class="i">Format on Save</code>.</p>
+            </div>
+            <div class="fx">
+              <div class="hr" style="margin-bottom:18px"></div><span class="mono">04 · Extension</span>
+              <div class="d4" style="margin:28px 0 14px">Auto Rename Tag</div>
+              <p class="p" style="font-size:19px">Renomme la balise fermante quand vous changez l'ouvrante.</p>
+            </div>
+          </div>
+          <p class="mono fx" style="margin-top:44px">Extensions · icône carrés à gauche dans VS Code, ou Ctrl+Shift+X ·
+            puis créez le dossier mon-one-page</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide dark" data-sec="Les exercices" data-t="01:43"
+      data-cap="Après le cours · dans l'ordre · à votre rythme">
+      <div class="lay">
+        <div class="code mono s scr" data-c="04 · 49 :0049::43"></div>
+        <div class="main">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px">
+            <div><span class="mono">Après le cours</span>
+              <div class="dot foil dx" style="font-size:120px;margin-top:18px">12 exos.</div>
+            </div>
+            <div style="text-align:right" class="fx"><button class="cp"
+                data-copy="https://html-css.viturna.fr">Copier le lien du site</button>
+              <p class="mono s mut cpst" style="margin-top:8px;min-height:16px"></p>
+            </div>
+          </div>
+          <div class="exl exl2 fx"><a href="https://html-css.viturna.fr#exo-01" target="_blank"
+              rel="noopener"><span class="mono">01</span><b>Le squelette</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-02" target="_blank" rel="noopener"><span
+                class="mono">02</span><b>Répare les balises</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-03" target="_blank" rel="noopener"><span
+                class="mono">03</span><b>Les éléments vides</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-04" target="_blank" rel="noopener"><span
+                class="mono">04</span><b>Imbriquer sans croiser</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-05" target="_blank" rel="noopener"><span
+                class="mono">05</span><b>De la soupe de div au sémantique</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-06" target="_blank" rel="noopener"><span
+                class="mono">06</span><b>Formulaire de contact</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-07" target="_blank" rel="noopener"><span
+                class="mono">07</span><b>Premiers sélecteurs</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-08" target="_blank" rel="noopener"><span
+                class="mono">08</span><b>Le box model</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-09" target="_blank" rel="noopener"><span
+                class="mono">09</span><b>Une navbar en Flexbox</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-10" target="_blank" rel="noopener"><span
+                class="mono">10</span><b>Centrer (enfin) une div</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-11" target="_blank" rel="noopener"><span
+                class="mono">11</span><b>Passer en responsive</b><span class="mono go">↗</span></a><a
+              href="https://html-css.viturna.fr#exo-12" target="_blank" rel="noopener"><span
+                class="mono">12</span><b>Intégrer ta maquette</b><span class="mono go">↗</span></a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide dark" data-sec="À vos maquettes" data-t="01:45"
+      data-cap="Maquette fournie ou la vôtre · HTML d'abord · mobile · W3C">
+      <div class="lay">
+        <div class="code mono s scr" data-c="04 · 50 :0050::45"></div>
+        <div class="main">
+          <span class="mono">Après les exercices · la maquette</span>
+          <div class="dot foil dx" style="font-size:170px;margin-top:34px;line-height:.95">À vos<br>maquettes.</div>
+          <div class="bottom">
+            <div class="hr" style="margin-bottom:22px"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px">
+              <a class="fx opt-card"
+                href="https://www.figma.com/design/uulU0dwcDZZGPG7EgO6sXt/Refonte-MusBA?node-id=10-2&amp;t=okJgT90mNXVYawG2-1"
+                target="_blank" rel="noopener"><span class="mono">Option 01 · Figma ↗</span>
+                <div class="d5" style="margin-top:14px">La refonte MusBA</div>
+              </a>
+              <div class="fx opt-card"><span class="mono">Option 02 · Photoshop</span>
+                <div class="d5" style="margin-top:14px">Votre maquette de l'atelier jeux vidéo</div>
+              </div>
+              <div class="fx opt-card"><span class="mono">Le rendu</span>
+                <div class="d5" style="margin-top:14px">HTML d'abord, CSS ensuite. Mobile vérifié, W3C validé.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- cadre fixe -->
+    <div class="frame top mono"><span>Thomas Riquier</span><span class="ctr" id="fSec"></span><span class="nav"><button
+          data-go="-1" aria-label="Précédent">←</button><span>/</span><button data-go="1"
+          aria-label="Suivant">→</button><span id="fNum" style="margin-left:14px"></span></span><i class="x l"></i><i
+        class="x r"></i></div>
+    <div class="frame bot mono s"><span>HTML / CSS · MMI 1A · distanciel</span><span class="ctr" id="fCap"></span><span
+        id="fT"></span><i class="x l"></i><i class="x r"></i></div>
+    <div class="rail" id="rail"></div>
+  </div>
+  <div id="help">← → · espace · F plein écran</div>
+
+  <script>
+    (function () {
+      const EXO_URL = "https://html-css.viturna.fr";
+      const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+      const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* ---------- coloration (monochrome) ---------- */
+      function hlHTML(src) {
+        let out = "", i = 0, m; const re =/<!--[\s\S]*?-->|<\/?[a-zA-Z!][^>]*>/g;
+  while ((m = re.exec(src))) {
+          out += esc(src.slice(i, m.index)); const tok = m[0];
+          if (tok.startsWith("<!--")) out += `<span class="c">${esc(tok)}</span>`;
+          else {
+            const p = tok.match(/^(<\/?)([^\s>\/]+)([\s\S]*?)(\/?>)$/);
+            if (!p) { out += esc(tok) } else {
+              let attrs = "", j = 0, a; const ar = /([^\s=]+)(\s*=\s*)?("[^"]*"|'[^']*'|[^\s"'>]+)?/g;
+              while ((a = ar.exec(p[3]))) { if (!a[0]) { ar.lastIndex++; continue } attrs += esc(p[3].slice(j, a.index)) + `<span class="a">${esc(a[1])}</span>` + (a[2] ? `<span class="p">${esc(a[2])}</span>` : "") + (a[3] ? `<span class="v">${esc(a[3])}</span>` : ""); j = ar.lastIndex }
+              attrs += esc(p[3].slice(j));
+              out += `<span class="p">${esc(p[1])}</span><span class="t">${esc(p[2])}</span>${attrs}<span class="p">${esc(p[4])}</span>`;
+            }
+          }
+          i = re.lastIndex;
+        }
+        return out + esc(src.slice(i));
+      }
+      function hlDecl(seg) {
+        let out = "", j = 0, d; const r = /([\w-]+)(\s*:\s*)([^;]*)(;?)/g;
+        while ((d = r.exec(seg))) { out += esc(seg.slice(j, d.index)) + `<span class="pr">${esc(d[1])}</span><span class="p">${esc(d[2])}</span><span class="v">${esc(d[3])}</span><span class="p">${esc(d[4])}</span>`; j = r.lastIndex }
+        return out + esc(seg.slice(j));
+      }
+      function hlCSS(src) {
+        let out = ""; const parts = src.split(/(\/\*[\s\S]*?\*\/)/);
+        parts.forEach((part, pi) => {
+          if (pi % 2 === 1) { out += `<span class="c">${esc(part)}</span>`; return }
+          const toks = part.split(/([{}])/);
+          toks.forEach((t, k) => {
+            if (t === "{" || t === "}") { out += `<span class="p">${t}</span>`; return }
+            let next = toks[k + 1];
+            if (next === undefined) { const rest = parts.slice(pi + 1).filter((_, x) => x % 2 === 0).join(""); const mm = rest.match(/[{}]/); next = mm ? mm[0] : "}" }
+            if (next === "{" && t.trim()) { const lead = t.match(/^\s*/)[0]; const body = t.slice(lead.length); out += esc(lead) + `<span class="${body.trim().startsWith("@") ? "at" : "sl"}">${esc(body)}</span>` }
+            else out += hlDecl(t);
+          });
+        });
+        return out;
+      }
+      const hl = (src, lang) => lang === "css" ? hlCSS(src) : hlHTML(src);
+      $$('script[type="text/x-code"]').forEach(s => {
+        if (s.closest(".live")) return;
+        const pre = document.createElement("pre");
+        pre.className = "code" + (s.dataset.size === "sm" ? " sm" : "");
+        pre.innerHTML = hl(s.textContent.replace(/^\n/, ""), s.dataset.lang);
+        s.replaceWith(pre);
+      });
+
+      /* ---------- découpage des titres en mots ---------- */
+      function splitWords(el) {
+        const walk = node => {
+          [...node.childNodes].forEach(n => {
+            if (n.nodeType === 3) {
+              const frag = document.createDocumentFragment();
+              n.textContent.split(/(\s+)/).forEach(part => {
+                if (!part) return;
+                if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return }
+                const w = document.createElement("span"); w.className = "w";
+                const i = document.createElement("span"); i.className = "w__i"; i.textContent = part;
+                w.appendChild(i); frag.appendChild(w);
+              });
+              n.replaceWith(frag);
+            } else if (n.nodeType === 1 && n.tagName !== "BR") walk(n);
+          });
+        };
+        walk(el);
+      }
+      $$(".rv").forEach(splitWords);
+
+      /* ---------- délais d'apparition ---------- */
+      const slides = $$(".slide"), N = slides.length;
+      slides.forEach(s => {
+        let k = 0;
+        $$(".w__i", s).forEach(w => { w.style.transitionDelay = (80 + k * 38) + "ms"; k++ });
+        let f = 0;
+        $$(".fx,.dx,.hr", s).forEach(e => { e.style.transitionDelay = (220 + f * 70) + "ms"; f++ });
+      });
+
+      /* ---------- scramble ---------- */
+      const CH = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789:/·-";
+      function scramble(el, txt, dur = 650) {
+        if (reduce) { el.textContent = txt; return }
+        const t0 = performance.now(); clearInterval(el._sc);
+        el._sc = setInterval(() => {
+          const p = Math.min(1, (performance.now() - t0) / dur); const n = Math.floor(p * txt.length);
+          el.textContent = txt.slice(0, n) + [...txt.slice(n)].map(c => c === " " ? " " : CH[Math.random() * CH.length | 0]).join("");
+          if (p >= 1) { clearInterval(el._sc); el.textContent = txt }
+        }, 34);
+      }
+
+      /* ---------- navigation ---------- */
+      const stage = $("#stage");
+      const rail = $("#rail"); rail.innerHTML = slides.map((_, i) => `<i data-i="${i}"></i>`).join("");
+      rail.addEventListener("click", e => { const i = e.target.dataset.i; if (i !== undefined) show(+i) });
+      function fit() { const s = Math.min(innerWidth / 1600, innerHeight / 900); stage.style.transform = `translate(-50%,-50%) scale(${s})` }
+      addEventListener("resize", fit); fit();
+      let cur = -1;
+      function show(i, push = true) {
+        i = Math.max(0, Math.min(N - 1, i)); if (i === cur) return;
+        const prev = slides[cur]; cur = i; const s = slides[i];
+        if (prev) { prev.classList.remove("on"); setTimeout(() => { if (prev !== slides[cur]) prev.classList.remove("in") }, 300) }
+        s.classList.add("on");
+        requestAnimationFrame(() => requestAnimationFrame(() => s.classList.add("in")));
+        stage.classList.toggle("is-dark", s.classList.contains("dark")); document.body.classList.toggle("is-dark", s.classList.contains("dark"));
+        scramble($("#fSec"), s.dataset.sec.toUpperCase());
+        scramble($("#fNum"), "//" + String(i + 1).padStart(4, "0"), 500);
+        scramble($("#fCap"), (s.dataset.cap || "").toUpperCase(), 800);
+        $("#fT").textContent = "T+" + s.dataset.t + " · " + String(i + 1).padStart(2, "0") + "/" + N;
+        $$(".scr", s).forEach(e => scramble(e, e.dataset.c, 900));
+        $$("i", rail).forEach((d, k) => { d.classList.toggle("on", k === i); d.classList.toggle("past", k < i) });
+        if (push) { try { history.replaceState(null, "", "#slide-" + (i + 1)) } catch (e) { } }
+        eqRun(i === 0);
+      }
+      function fromHash() { const m = location.hash.match(/^#slide-(\d+)$/); return m ? parseInt(m[1], 10) - 1 : 0 }
+      addEventListener("hashchange", () => { const i = fromHash(); if (i !== cur) show(i, false) });
+      document.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) show(cur + parseInt(b.dataset.go, 10)) });
+      document.addEventListener("keydown", e => {
+        const t = e.target; if (t.matches && t.matches("input,textarea")) { if (e.key === "Escape") t.blur(); return }
+        if (t.matches && t.matches("button") && (e.key === " " || e.key === "Enter")) return;
+        if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); show(cur + 1) }
+        else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); show(cur - 1) }
+        else if (e.key === "Home") show(0); else if (e.key === "End") show(N - 1);
+        else if (e.key === "f" || e.key === "F") { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => { }) } catch (err) { } }
+      });
+      setTimeout(() => { $("#help").style.opacity = 0 }, 4500);
+
+      /* ---------- égaliseur ---------- */
+      const eq = $("#eq"), COLS = 13, ROWS = 12; let eqT = null; const lv = Array(COLS).fill(0).map(() => Math.random() * ROWS);
+      eq.innerHTML = Array(COLS * ROWS).fill("<i></i>").join("");
+      const dots = $$("i", eq);
+      function eqStep() {
+        for (let c = 0; c < COLS; c++) {
+          lv[c] += (Math.random() - .5) * 4.2; lv[c] = Math.max(2, Math.min(ROWS, lv[c]));
+          for (let r = 0; r < ROWS; r++) {
+            const fromBottom = ROWS - r; const d = dots[r * COLS + c];
+            const diff = lv[c] - fromBottom; let cls = "";
+            if (diff >= 2) cls = "l5"; else if (diff >= 1) cls = "l4"; else if (diff >= 0) cls = "l3"; else if (diff >= -1) cls = "l2"; else if (diff >= -2) cls = "l1";
+            d.className = cls;
+          }
+        }
+      }
+      function eqRun(on) { clearInterval(eqT); if (on && !reduce) { eqStep(); eqT = setInterval(eqStep, 150) } else eqStep() }
+
+      /* ---------- QR ---------- */
+      document.addEventListener("click", async e => { const b = e.target.closest("[data-copy]"); if (!b) return; const st = b.parentElement.querySelector(".cpst"); try { await navigator.clipboard.writeText(b.dataset.copy); if (st) st.textContent = "Copié" } catch (err) { if (st) st.textContent = "Copie bloquée · sélectionnez le lien" } });
+
+      /* ---------- structure ---------- */
+      const STRUCT = [
+        ["Le doctype", "Première ligne, toujours. Elle dit au navigateur : c'est du HTML5 moderne. Sans elle, il passe en mode compatibilité avec les vieux sites."],
+        ["La racine", "Tout le reste est dedans. L'attribut lang donne la langue, pour les lecteurs d'écran, la traduction et Google."],
+        ["Le head", "Les coulisses. Rien ici ne s'affiche dans la page : ce sont des infos pour le navigateur et les moteurs de recherche."],
+        ["L'encodage", "UTF-8, et les accents s'affichent correctement. Sans lui : « Ã© » à la place de « é »."],
+        ["Le viewport", "Indispensable au responsive. Le mobile affiche la page à sa vraie largeur au lieu de dézoomer un site de bureau."],
+        ["Le titre", "Le texte de l'onglet, et le titre dans Google. Un par page."],
+        ["Le lien CSS", "Relie la feuille de style. href est le chemin vers le fichier, depuis index.html."],
+        ["Le body", "Tout ce que l'utilisateur voit. C'est ici que vous passerez 95 % de votre temps."],
+        ["Le contenu", "Votre premier élément visible. Le h1, titre principal de la page. Un seul par page."],
+        ["La description", "Le petit texte sous le titre dans les résultats Google. Une à deux phrases qui donnent envie de cliquer."],
+        ["La favicon", "L'icône de l'onglet et des favoris. Un petit carré, souvent en .ico, .png ou .svg."]
+      ];
+      function setStruct(k) { $$("#struct .ln").forEach(l => l.classList.toggle("on", l.dataset.k == k)); $("#expl").innerHTML = `<div class="dot foil num">${String(+k + 1).padStart(2, "0")}</div><div class="d4">${STRUCT[k][0]}</div><p class="p">${STRUCT[k][1]}</p>` }
+      $$("#struct .ln").forEach(l => l.addEventListener("click", () => setStruct(l.dataset.k)));
+      setStruct(0);
+
+      /* ---------- anatomie ---------- */
+      function anat(k) { const a = $("#anat"), lg = $("#legend"); a.classList.toggle("dim", !!k); lg.classList.toggle("dim", !!k); $$(".pt", a).forEach(p => p.classList.toggle("hl", k === "all" || p.dataset.k === k)); $$(".it", lg).forEach(p => p.classList.toggle("hl", p.dataset.k === k)) }
+      $$("#anat .pt,#legend .it").forEach(el => { el.addEventListener("mouseenter", () => anat(el.dataset.k)); el.addEventListener("click", () => anat(el.dataset.k)) });
+      $("#anat").addEventListener("mouseleave", () => anat(null)); $("#legend").addEventListener("mouseleave", () => anat(null));
+
+      /* ---------- imbrication ---------- */
+      const NEST = { good: ['<p>Bienvenue chez <strong>Graphikart</strong> sur notre site.</p>', "Strong est fermé avant la fin du p"], bad: ['<p>Bienvenue chez <strong>Graphikart</p></strong>', "Les boîtes se chevauchent · le navigateur devine, souvent mal"] };
+      function nest(m) { $("#nest").dataset.mode = m; $$("#nestTg button").forEach(b => b.classList.toggle("on", b.dataset.m === m)); $("#nestCode").innerHTML = `<pre class="code sm">${hlHTML(NEST[m][0])}</pre>`; scramble($("#nestV"), NEST[m][1].toUpperCase(), 500) }
+      $$("#nestTg button").forEach(b => b.onclick = () => nest(b.dataset.m)); nest("good");
+
+      /* ---------- éditeurs live ---------- */
+      const BASE = "<style>body{font-family:system-ui,sans-serif;margin:20px}</style>";
+      $$(".live").forEach(box => {
+        const srcs = $$('script[type="text/x-code"]', box);
+        const html = srcs.find(s => s.dataset.lang === "html"), css = srcs.find(s => s.dataset.lang === "css");
+        box.innerHTML = "";
+        const eds = document.createElement("div"); eds.className = "eds"; const areas = {};
+        [["html", html], ["css", css]].forEach(([l, s]) => { if (!s) return; eds.insertAdjacentHTML("beforeend", `<div class="tabh"><span>${l === "html" ? "index.html" : "style.css"}</span><span>${l === "html" ? "le squelette" : "la peau"}</span></div>`); const ta = document.createElement("textarea"); ta.spellcheck = false; ta.value = s.textContent.replace(/^\n/, ""); eds.appendChild(ta); areas[l] = ta });
+        const pv = document.createElement("div"); pv.className = "pv"; pv.innerHTML = '<div class="tabh"><span>Aperçu</span><span>● en direct</span></div>';
+        const f = document.createElement("iframe"); f.title = "Aperçu"; pv.appendChild(f);
+        box.append(eds, pv);
+        const up = () => { f.srcdoc = BASE + (areas.css ? `<style>${areas.css.value}</style>` : "") + areas.html.value };
+        Object.values(areas).forEach(t => { t.addEventListener("input", up); t.addEventListener("keydown", e => { if (e.key === "Tab") { e.preventDefault(); const a = t.selectionStart; t.value = t.value.slice(0, a) + "  " + t.value.slice(t.selectionEnd); t.selectionStart = t.selectionEnd = a + 2; up() } }) });
+        up();
+      });
+
+      /* ---------- sémantique ---------- */
+      const SEMW = { div: "Pour le navigateur, tout est une div : des boîtes sans nom. Un lecteur d'écran ne peut pas sauter au menu, Google ne sait pas où est le contenu.", sem: "Chaque zone dit ce qu'elle est. Accessibilité, référencement, lisibilité du code : tout s'améliore, sans rien changer à l'affichage." };
+      function sem(m) { $("#semw").dataset.mode = m; $$("#semTg button").forEach(b => b.classList.toggle("on", b.dataset.m === m)); $("#semWhy").textContent = SEMW[m] }
+      $$("#semTg button").forEach(b => b.onclick = () => sem(b.dataset.m)); sem("div");
+
+      /* ---------- formulaire démo ---------- */
+      $("#formdemo").addEventListener("submit", e => { e.preventDefault(); const f = e.target; const bad = [...f.querySelectorAll("[required]")].filter(x => !x.checkValidity()); $("#fdMsg").textContent = bad.length ? "REQUIRED · " + bad.length + " champ(s) à remplir" : "OK · le formulaire serait envoyé" });
+
+      /* ---------- sélecteurs ---------- */
+      const tree = $("#selTree"); tree.addEventListener("click", e => e.preventDefault());
+      function sel(v) {
+        $$(".hit", tree).forEach(x => x.classList.remove("hit")); const info = $("#selInfo");
+        if (!v.trim()) { info.textContent = "Tapez un sélecteur"; return }
+        try { const r = $$(v, tree); r.forEach(x => x.classList.add("hit")); info.textContent = String(r.length).padStart(2, "0") + (r.length > 1 ? " éléments ciblés" : " élément ciblé") }
+        catch (e) { info.textContent = "Sélecteur invalide" }
+      }
+      $("#selIn").addEventListener("input", e => sel(e.target.value));
+      $$("#selChips button").forEach(b => b.onclick = () => { $("#selIn").value = b.textContent; sel(b.textContent) });
+      sel("h2");
+
+      /* ---------- box model ---------- */
+      const bm = { w: 300, p: 24, b: 4, m: 30, bs: "content-box" };
+      function drawBM() {
+        const inner = bm.bs === "border-box" ? Math.max(0, bm.w - 2 * bm.p - 2 * bm.b) : bm.w;
+        const total = bm.bs === "border-box" ? bm.w : bm.w + 2 * bm.p + 2 * bm.b;
+        $("#bmM").style.padding = bm.m + "px"; $("#bmB").style.borderWidth = bm.b + "px"; $("#bmP").style.padding = bm.p + "px";
+        $("#bmC").style.width = inner + "px"; $("#bmC").innerHTML = `contenu<br>${inner}px`;
+        $("#bmTot").innerHTML = `<span class="mono">${bm.bs === "border-box" ? "width inclut padding et border" : `${bm.w} + ${2 * bm.p} + ${2 * bm.b}`}</span><span class="dot">${total}px</span>`;
+      }
+      $$(".ctrl input[type=range]").forEach(r => r.addEventListener("input", () => { bm[r.dataset.p] = +r.value; r.nextElementSibling.textContent = r.value; drawBM() }));
+      $$("#bmTg button").forEach(b => b.onclick = () => { bm.bs = b.dataset.bs; $$("#bmTg button").forEach(x => x.classList.toggle("on", x === b)); drawBM() });
+      drawBM();
+
+      /* ---------- flexbox ---------- */
+      const fx = { flexDirection: "row", justifyContent: "flex-start", alignItems: "flex-start", gap: "0px", flexWrap: "nowrap" };
+      const kebab = s => s.replace(/[A-Z]/g, m => "-" + m.toLowerCase());
+      function drawFx() {
+        const box = $("#fxBox"); Object.entries(fx).forEach(([k, v]) => box.style[k] = v);
+        const lines = ["display: flex;"].concat(Object.entries(fx).map(([k, v]) => `${kebab(k)}: ${v};`));
+        $("#fxCode").innerHTML = `<pre class="code sm" style="font-size:15px;padding:16px 20px;line-height:1.5">${hlCSS(".parent {\n  " + lines.join("\n  ") + "\n}")}</pre>`;
+      }
+      $$("[data-fx]").forEach(g => $$("button", g).forEach(b => b.onclick = () => { fx[g.dataset.fx] = b.textContent; $$("button", g).forEach(x => x.classList.toggle("on", x === b)); drawFx() }));
+      drawFx();
+
+      /* ---------- responsive ---------- */
+      const RSP = `<!DOCTYPE html><html><head><style>
+*{box-sizing:border-box;margin:0}body{font-family:system-ui,sans-serif;background:#fff;color:#1a1b1d;letter-spacing:-.02em}
+nav{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #1a1b1d;font:12px/1 monospace;text-transform:uppercase}
+nav ul{gap:18px;list-style:none;padding:0}
+.hero{padding:44px 20px 30px;font-size:44px;font-weight:500;line-height:.95;letter-spacing:-.05em}
+.cartes{display:flex;flex-direction:column;gap:12px;padding:0 20px 20px}
+.carte{height:90px;background:#f5f5f6;padding:14px;font:11px monospace;text-transform:uppercase;display:flex;align-items:flex-end}
+.carte:nth-child(2){background:linear-gradient(135deg,#d9653b,#2f4e72);color:#fff}
+nav ul{display:none}.hero{font-size:32px}
+@media (min-width:769px){.cartes{flex-direction:row}.carte{flex:1;height:150px}nav ul{display:flex}.hero{font-size:44px}}
+</style></head><body><nav><span>.Nova</span><ul><li>Projets</li><li>À propos</li><li>Contact</li></ul></nav><div class="hero">Studio Nova,<br>design &amp; web.</div><div class="cartes"><div class="carte">01 · Projet</div><div class="carte">02 · Projet</div><div class="carte">03 · Projet</div></div></body></html>`;
+      const rf = $("#rspF"); rf.srcdoc = RSP;
+      function rsp() { const w = +$("#rspIn").value; rf.style.width = w + "px"; $("#rspSt").textContent = w + "px · " + (w <= 768 ? "règle mobile" : "bureau") }
+      $("#rspIn").addEventListener("input", rsp); rsp();
+
+      /* ---------- minuteurs ---------- */
+      $$(".timer").forEach(t => {
+        const total = +t.dataset.min * 60; let left = total, iv = null;
+        const draw = () => { t.textContent = String(Math.floor(left / 60)).padStart(2, "0") + ":" + String(left % 60).padStart(2, "0"); t.classList.toggle("end", left === 0) };
+        t.parentElement.querySelector(".tctl").addEventListener("click", e => {
+          const a = e.target.dataset.act; if (!a) return;
+          if (a === "go" && !iv) { iv = setInterval(() => { if (left > 0) { left--; draw() } if (left === 0) { clearInterval(iv); iv = null } }, 1000) }
+          if (a === "pause") { clearInterval(iv); iv = null }
+          if (a === "reset") { clearInterval(iv); iv = null; left = total; draw() }
+        });
+        draw();
+      });
+
+      /* ---------- variables ---------- */
+      $$("#varTg button").forEach(b => b.onclick = () => { $$("#varTg button").forEach(x => x.classList.toggle("on", x === b)); $("#varDemo").classList.toggle("dark-th", b.dataset.th === "dark") });
+
+      /* ---------- position ---------- */
+      const POS = { static: "", relative: "top: 24px;\n  left: 60px;", absolute: "top: 16px;\n  right: 16px;", fixed: "bottom: 120px;\n  right: 80px;" };
+      function pos(v) {
+        const b = $("#posBox"); b.style.cssText = ""; b.style.position = v;
+        (POS[v] || "").split("\n").forEach(l => { const m = l.trim().match(/^([\w-]+):\s*([^;]+);/); if (m) b.style[m[1]] = m[2] });
+        $$("#posTg button").forEach(x => x.classList.toggle("on", x.textContent === v));
+        $("#posCode").innerHTML = `<pre class="code sm">${hlCSS(".box {\n  position: " + v + ";" + (POS[v] ? "\n  " + POS[v] : "") + "\n}")}</pre>`;
+      }
+      $$("#posTg button").forEach(b => b.onclick = () => pos(b.textContent)); pos("static");
+
+      show(fromHash(), false);
+    })();
+  </script>
+</body>
+
+</html>
